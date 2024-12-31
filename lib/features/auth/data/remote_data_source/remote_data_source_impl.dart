@@ -1,5 +1,8 @@
+import 'dart:developer';
+
 import 'package:appwrite/appwrite.dart';
 import 'package:appwrite/models.dart' as model;
+import 'package:twitter_clone/core/constants/appwrite_constants.dart';
 import 'package:twitter_clone/core/type_def/datatype.dart';
 import 'package:twitter_clone/core/exceptions/auth_exceptions.dart';
 
@@ -11,7 +14,7 @@ abstract interface class AuthRemoteDataSource {
     required String email,
     required String password,
   });
-  UserOfFuture<model.User> signIn({
+  UserOfFuture<model.Session> signIn({
     required String email,
     required String password,
   });
@@ -32,22 +35,17 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
         email: email,
         password: password,
       );
+      log(response.toString());
       return response;
-    } on AppwriteException catch (e, stackTrace) {
-      if (e.code == 400) {
-        throw ServerException(
-            message: 'Invalid email or password', stackTrace: stackTrace);
-      } else if (e.code == 409) {
-        throw ServerException(
-            message: 'Email already used', stackTrace: stackTrace);
-      } else if (e.code == 401) {
-        throw ServerException(
-            message: 'Unauthorized access', stackTrace: stackTrace);
+    } on AppwriteException catch (e) {
+      if (e.code != null) {
+        final String message = generateErrorMessage(e.code!);
+        log(message);
+        throw ServerException(message: message, stackTrace: StackTrace.current);
       } else {
+        log(e.toString());
         throw ServerException(
-          message: 'An unexpected error has been occured',
-          stackTrace: stackTrace,
-        );
+            message: e.toString(), stackTrace: StackTrace.current);
       }
     } catch (e, stackTrace) {
       throw ServerException(message: e.toString(), stackTrace: stackTrace);
@@ -55,10 +53,31 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   }
 
   @override
-  UserOfFuture<model.User> signIn({
+  UserOfFuture<model.Session> signIn({
     required String email,
     required String password,
-  }) {
-    throw UnimplementedError();
+  }) async {
+    try {
+      final response = await _account.createEmailPasswordSession(
+          email: email, password: password);
+      log(response.toString());
+      return response;
+    } on AppwriteException catch (e) {
+      if (e.code != null) {
+        final message = generateErrorMessage(e.code!);
+        log(message);
+        throw ServerException(message: message, stackTrace: StackTrace.current);
+      } else {
+        log(e.toString());
+        throw ServerException(
+            message: e.toString(), stackTrace: StackTrace.current);
+      }
+    }
+  }
+
+// this will find the error using the error code and provide an informative message about what is wrong;
+  String generateErrorMessage(int code) {
+    return AppwriteConstants.errorCodesAndTheirMessages[code] ??
+        'An error has been occured ';
   }
 }
