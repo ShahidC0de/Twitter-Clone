@@ -21,4 +21,6 @@ void _initAuth() {
       () => RepostoryImpl(authRemoteDataSource: serviceLocator()));
   serviceLocator
       .registerFactory(() => UserSignUp(authRepository: serviceLocator()));
+  serviceLocator
+      .registerLazySingleton(() => AuthBloc(userSignUp: serviceLocator()));
 }

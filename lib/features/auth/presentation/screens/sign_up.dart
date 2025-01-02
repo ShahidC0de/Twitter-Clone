@@ -1,8 +1,11 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:twitter_clone/core/common/common.dart';
 import 'package:twitter_clone/core/constants/constants.dart';
 import 'package:twitter_clone/core/theme/theme.dart';
+import 'package:twitter_clone/core/utils/utilities.dart';
+import 'package:twitter_clone/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:twitter_clone/features/auth/presentation/screens/login.dart';
 import 'package:twitter_clone/features/auth/presentation/widgets/auth_field.dart';
 
@@ -32,56 +35,77 @@ class _SignUpState extends State<SignUp> {
       body: Center(
         child: SingleChildScrollView(
           // its login so there will be textfields and when the keyboard appear for it, we dont want to be overflowed so....
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20),
-            child: Column(
-              children: [
-                AuthField(
-                  controller: emailController,
-                  hintText: 'Email',
-                ),
-                const SizedBox(
-                  height: 25,
-                ),
-                AuthField(
-                  controller: passwordController,
-                  hintText: 'Password',
-                ),
-                const SizedBox(
-                  height: 40,
-                ),
-                Align(
-                  alignment: Alignment.topRight,
-                  child: RoundedSmallButton(
-                    onTap: () {},
-                    label: 'Done',
-                  ),
-                ),
-                const SizedBox(
-                  height: 40,
-                ),
-                RichText(
-                  text: TextSpan(
-                    text: "Already have an account?",
-                    style: const TextStyle(
-                      fontSize: 16,
+          child: BlocConsumer<AuthBloc, AuthState>(
+            listener: (context, state) {
+              if (state is AuthFailure) {
+                showSnackBar(context, state.message);
+              }
+              if (state is AuthSuccess) {
+                showSnackBar(context, state.user.toString());
+              }
+            },
+            builder: (context, state) {
+              if (state is AuthLoading) {
+                return const Center(
+                  child: CircularProgressIndicator(),
+                );
+              }
+              return Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                child: Column(
+                  children: [
+                    AuthField(
+                      controller: emailController,
+                      hintText: 'Email',
                     ),
-                    children: const [
-                      TextSpan(
-                          text: '  Login ',
-                          style: TextStyle(
-                            color: Pallete.blueColor,
-                            fontSize: 16,
-                          ))
-                    ],
-                    recognizer: TapGestureRecognizer()
-                      ..onTap = () {
-                        Navigator.push(context, Login.route());
-                      },
-                  ),
+                    const SizedBox(
+                      height: 25,
+                    ),
+                    AuthField(
+                      controller: passwordController,
+                      hintText: 'Password',
+                    ),
+                    const SizedBox(
+                      height: 40,
+                    ),
+                    Align(
+                      alignment: Alignment.topRight,
+                      child: RoundedSmallButton(
+                        onTap: () {
+                          context.read<AuthBloc>().add(SignUpEvent(
+                              email: emailController.text,
+                              password: passwordController.text));
+                        },
+                        label: 'Done',
+                      ),
+                    ),
+                    const SizedBox(
+                      height: 40,
+                    ),
+                    RichText(
+                      text: TextSpan(
+                        text: "Already have an account?",
+                        style: const TextStyle(
+                          fontSize: 16,
+                        ),
+                        children: const [
+                          TextSpan(
+                              text: '  Login ',
+                              style: TextStyle(
+                                color: Pallete.blueColor,
+                                fontSize: 16,
+                              ))
+                        ],
+                        recognizer: TapGestureRecognizer()
+                          ..onTap = () {
+                            Navigator.push(context, Login.route());
+                          },
+                      ),
+                    ),
+                  ],
                 ),
-              ],
-            ),
+              );
+            },
           ),
         ),
       ),

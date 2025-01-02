@@ -6,5 +6,6 @@ import 'package:twitter_clone/features/auth/data/remote_data_source/remote_data_
 import 'package:twitter_clone/features/auth/data/repositories/repostory_impl.dart';
 import 'package:twitter_clone/features/auth/domain/repositories/auth_repository.dart';
 import 'package:twitter_clone/features/auth/domain/use_cases/sign_up_usecase.dart';
+import 'package:twitter_clone/features/auth/presentation/bloc/auth_bloc.dart';
 
 part "init_dependencies.dart";

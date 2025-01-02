@@ -1,12 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:twitter_clone/core/theme/app_theme.dart';
+import 'package:twitter_clone/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:twitter_clone/features/auth/presentation/screens/login.dart';
 import 'package:twitter_clone/init_dependencies_part.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
   initDependencies();
-  runApp(const MyApp());
+  runApp(MultiBlocProvider(providers: [
+    BlocProvider(
+      create: (_) => serviceLocator<AuthBloc>(),
+    ),
+  ], child: const MyApp()));
 }
 
 class MyApp extends StatelessWidget {
