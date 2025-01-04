@@ -23,7 +23,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       final response = await _userSignUp
           .call(UserSignUpParams(email: event.email, password: event.password));
       response.fold((failure) {
-        log(response.toString());
+        log(failure.message);
         emit(AuthFailure(message: failure.message));
       }, (user) {
         log(user.toString());

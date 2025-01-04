@@ -7,6 +7,7 @@ Future<void> initDependencies() async {
         .setEndpoint(AppwriteConstants.endPoint)
         .setProject(AppwriteConstants.projectId);
     Account account = Account(client);
+    log('Appwrite has been initialized');
     serviceLocator.registerLazySingleton(() => account);
     _initAuth();
   } catch (e, stackTrace) {
