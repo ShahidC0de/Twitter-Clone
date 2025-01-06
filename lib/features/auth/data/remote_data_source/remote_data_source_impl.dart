@@ -1,8 +1,4 @@
-import 'dart:developer';
-
-import 'package:appwrite/appwrite.dart';
-import 'package:appwrite/models.dart' as model;
-import 'package:twitter_clone/core/constants/appwrite_constants.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:twitter_clone/core/type_def/datatype.dart';
 import 'package:twitter_clone/core/exceptions/auth_exceptions.dart';
 
@@ -10,74 +6,45 @@ import 'package:twitter_clone/core/exceptions/auth_exceptions.dart';
 // Want to access user-related data  -> model.Account, from models class
 
 abstract interface class AuthRemoteDataSource {
-  UserOfFuture<model.User> signUp({
+  UserOfFuture<UserCredential> signUp({
     required String email,
     required String password,
   });
-  UserOfFuture<model.Session> signIn({
+  UserOfFuture<String> signIn({
     required String email,
     required String password,
   });
 }
 
 class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
-  final Account _account;
+  final FirebaseAuth _firebaseAuth;
 
-  AuthRemoteDataSourceImpl({required Account account}) : _account = account;
+  AuthRemoteDataSourceImpl({required FirebaseAuth firebaseAuth})
+      : _firebaseAuth = firebaseAuth;
 
   @override
-  UserOfFuture<model.User> signUp(
+  UserOfFuture<UserCredential> signUp(
       {required String email, required String password}) async {
     try {
       // Create a user account using Appwrite
-      final model.User response = await _account.create(
-        userId: ID.unique(),
+      final UserCredential userCredential =
+          await _firebaseAuth.createUserWithEmailAndPassword(
         email: email,
         password: password,
       );
-      log(response.toString());
-      return response;
-    } on AppwriteException catch (e) {
-      if (e.code != null) {
-        final String message = generateErrorMessage(e.code!);
-        log(message);
-        throw ServerException(message: message, stackTrace: StackTrace.current);
-      } else {
-        log(e.toString());
-        throw ServerException(
-            message: e.toString(), stackTrace: StackTrace.current);
-      }
+
+      return userCredential;
+    } on FirebaseException catch (e) {
+      throw ServerException(message: e.code, stackTrace: StackTrace.current);
     } catch (e, stackTrace) {
       throw ServerException(message: e.toString(), stackTrace: stackTrace);
     }
   }
 
   @override
-  UserOfFuture<model.Session> signIn({
-    required String email,
-    required String password,
-  }) async {
-    try {
-      final response = await _account.createEmailPasswordSession(
-          email: email, password: password);
-      log(response.toString());
-      return response;
-    } on AppwriteException catch (e) {
-      if (e.code != null) {
-        final message = generateErrorMessage(e.code!);
-        log(message);
-        throw ServerException(message: message, stackTrace: StackTrace.current);
-      } else {
-        log(e.toString());
-        throw ServerException(
-            message: e.toString(), stackTrace: StackTrace.current);
-      }
-    }
-  }
-
-// this will find the error using the error code and provide an informative message about what is wrong;
-  String generateErrorMessage(int code) {
-    return AppwriteConstants.errorCodesAndTheirMessages[code] ??
-        'An error has been occured ';
+  UserOfFuture<String> signIn(
+      {required String email, required String password}) {
+    // TODO: implement signIn
+    throw UnimplementedError();
   }
 }

@@ -16,7 +16,8 @@ class RepostoryImpl implements AuthRepository {
     try {
       final response =
           await _authRemoteDataSource.signUp(email: email, password: password);
-      return right(UserEntity(id: response.$id, email: response.email));
+      return right(
+          UserEntity(id: response.user!.uid, email: response.user!.email!));
     } catch (e) {
       return left(Failure(e.toString(), StackTrace.current));
     }

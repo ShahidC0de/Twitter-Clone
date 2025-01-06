@@ -5,9 +5,9 @@ import 'package:twitter_clone/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:twitter_clone/features/auth/presentation/screens/sign_up.dart';
 import 'package:twitter_clone/init_dependencies_part.dart';
 
-void main() {
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  initDependencies();
+  await initDependencies();
   runApp(MultiBlocProvider(providers: [
     BlocProvider(
       create: (_) => serviceLocator<AuthBloc>(),

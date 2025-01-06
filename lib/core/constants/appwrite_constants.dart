@@ -1,7 +1,7 @@
 class AppwriteConstants {
   static const String databaseId = '677133b20014ff747f62';
   static const String projectId = '67702c62002f9bd90a18';
-  static const String endPoint = 'http://localhost:80';
+  static const String endPoint = 'http://10.0.2.2/v1';
   static const Map<int, String> errorCodesAndTheirMessages = {
     400: " general_argument_invalid",
     401:

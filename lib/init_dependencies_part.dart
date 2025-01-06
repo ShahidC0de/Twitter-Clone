@@ -1,9 +1,9 @@
 import 'dart:developer';
+import 'dart:io';
 
-import 'package:appwrite/appwrite.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:get_it/get_it.dart';
-import 'package:twitter_clone/core/constants/appwrite_constants.dart';
-import 'package:twitter_clone/core/exceptions/auth_exceptions.dart';
 import 'package:twitter_clone/features/auth/data/remote_data_source/remote_data_source_impl.dart';
 import 'package:twitter_clone/features/auth/data/repositories/repostory_impl.dart';
 import 'package:twitter_clone/features/auth/domain/repositories/auth_repository.dart';
