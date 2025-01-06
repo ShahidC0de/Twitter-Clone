@@ -11,3 +11,12 @@ final class SignUpEvent extends AuthEvent {
     required this.password,
   });
 }
+
+final class SignInEvent extends AuthEvent {
+  final String email;
+  final String password;
+  SignInEvent({
+    required this.email,
+    required this.password,
+  });
+}

@@ -25,7 +25,16 @@ class RepostoryImpl implements AuthRepository {
 
   @override
   FutureEither<UserEntity> signIn(
-      {required String email, required String password}) {
-    throw UnimplementedError();
+      {required String email, required String password}) async {
+    try {
+      final response =
+          await _authRemoteDataSource.signIn(email: email, password: password);
+      return right(
+          UserEntity(id: response.user!.uid, email: response.user!.email!));
+    } catch (e) {
+      return left(
+        Failure(e.toString(), StackTrace.current),
+      );
+    }
   }
 }

@@ -10,7 +10,7 @@ abstract interface class AuthRemoteDataSource {
     required String email,
     required String password,
   });
-  UserOfFuture<String> signIn({
+  UserOfFuture<UserCredential> signIn({
     required String email,
     required String password,
   });
@@ -34,7 +34,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       );
 
       return userCredential;
-    } on FirebaseException catch (e) {
+    } on FirebaseAuthException catch (e) {
       throw ServerException(message: e.code, stackTrace: StackTrace.current);
     } catch (e, stackTrace) {
       throw ServerException(message: e.toString(), stackTrace: stackTrace);
@@ -42,9 +42,18 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   }
 
   @override
-  UserOfFuture<String> signIn(
-      {required String email, required String password}) {
-    // TODO: implement signIn
-    throw UnimplementedError();
+  UserOfFuture<UserCredential> signIn(
+      {required String email, required String password}) async {
+    try {
+      final UserCredential userCredential = await _firebaseAuth
+          .signInWithEmailAndPassword(email: email, password: password);
+      return userCredential;
+    } on FirebaseAuthException catch (e) {
+      throw ServerException(
+          message: e.toString(), stackTrace: StackTrace.current);
+    } catch (e) {
+      throw ServerException(
+          message: e.toString(), stackTrace: StackTrace.current);
+    }
   }
 }

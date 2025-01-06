@@ -2,6 +2,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:twitter_clone/core/common/common.dart';
+import 'package:twitter_clone/core/common/loader.dart';
 import 'package:twitter_clone/core/constants/constants.dart';
 import 'package:twitter_clone/core/theme/theme.dart';
 import 'package:twitter_clone/core/utils/utilities.dart';
@@ -46,9 +47,7 @@ class _SignUpState extends State<SignUp> {
             },
             builder: (context, state) {
               if (state is AuthLoading) {
-                return const Center(
-                  child: CircularProgressIndicator(),
-                );
+                return const Loader();
               }
               return Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 20),
