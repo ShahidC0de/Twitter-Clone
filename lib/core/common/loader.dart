@@ -9,13 +9,13 @@ class Loader extends StatelessWidget {
   }
 }
 
-class LoaderPage extends StatelessWidget {
-  const LoaderPage({super.key});
+class LoadingPage extends StatelessWidget {
+  const LoadingPage({super.key});
 
   @override
   Widget build(BuildContext context) {
     return const Scaffold(
-      body: CircularProgressIndicator(),
+      body: Loader(),
     );
   }
 }

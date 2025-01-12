@@ -9,6 +9,7 @@ import 'package:twitter_clone/core/utils/utilities.dart';
 import 'package:twitter_clone/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:twitter_clone/features/auth/presentation/screens/sign_up.dart';
 import 'package:twitter_clone/features/auth/presentation/widgets/auth_field.dart';
+import 'package:twitter_clone/features/home/presentation/screens/home.dart';
 
 class Login extends StatefulWidget {
   static route() => MaterialPageRoute(builder: (context) => const Login());
@@ -24,6 +25,11 @@ class _LoginState extends State<Login> {
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
   @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
   void dispose() {
     super.dispose();
     emailController.dispose();
@@ -38,17 +44,17 @@ class _LoginState extends State<Login> {
       body: Center(
         child: BlocConsumer<AuthBloc, AuthState>(
           listener: (context, state) {
-            if (state is AuthFailure) {
+            if (state is SignInFailure) {
               showSnackBar(context, state.message);
-            }
-            if (state is AuthSuccess) {
-              showSnackBar(context, state.user.toString());
+            } else if (state is SignInSuccess) {
+              Navigator.push(context, Home.route());
             }
           },
           builder: (context, state) {
             if (state is AuthLoading) {
               return const Loader();
             }
+
             return SingleChildScrollView(
               // its login so there will be textfields and when the keyboard appear for it, we dont want to be overflowed so....
               child: Padding(

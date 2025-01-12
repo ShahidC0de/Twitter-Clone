@@ -7,12 +7,22 @@ final class AuthInitial extends AuthState {}
 
 final class AuthLoading extends AuthState {}
 
-final class AuthFailure extends AuthState {
+final class SignUpFailure extends AuthState {
   final String message;
-  AuthFailure({required this.message});
+  SignUpFailure({required this.message});
 }
 
-final class AuthSuccess extends AuthState {
+final class SignUpSuccess extends AuthState {
   final UserEntity user;
-  AuthSuccess({required this.user});
+  SignUpSuccess({required this.user});
+}
+
+final class SignInFailure extends AuthState {
+  final String message;
+  SignInFailure({required this.message});
+}
+
+final class SignInSuccess extends AuthState {
+  final UserEntity user;
+  SignInSuccess({required this.user});
 }

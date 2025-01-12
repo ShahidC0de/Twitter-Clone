@@ -28,10 +28,10 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
           .call(UserSignUpParams(email: event.email, password: event.password));
       response.fold((failure) {
         log(failure.message);
-        emit(AuthFailure(message: failure.message));
+        emit(SignUpFailure(message: failure.message));
       }, (user) {
         log(user.toString());
-        emit(AuthSuccess(user: user));
+        emit(SignUpSuccess(user: user));
       });
     });
     on<SignInEvent>((event, emit) async {
@@ -39,9 +39,9 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       final response = await _userSignIn
           .call(UserSignInParams(email: event.email, password: event.password));
       response.fold((failure) {
-        emit(AuthFailure(message: failure.message));
+        emit(SignInFailure(message: failure.message));
       }, (response) {
-        emit(AuthSuccess(user: response));
+        emit(SignInSuccess(user: response));
       });
     });
   }

@@ -38,17 +38,17 @@ class _SignUpState extends State<SignUp> {
           // its login so there will be textfields and when the keyboard appear for it, we dont want to be overflowed so....
           child: BlocConsumer<AuthBloc, AuthState>(
             listener: (context, state) {
-              if (state is AuthFailure) {
+              if (state is SignUpFailure) {
                 showSnackBar(context, state.message);
-              }
-              if (state is AuthSuccess) {
-                showSnackBar(context, state.user.toString());
+              } else if (state is SignUpSuccess) {
+                Navigator.push(context, Login.route());
               }
             },
             builder: (context, state) {
               if (state is AuthLoading) {
                 return const Loader();
               }
+
               return Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 20),
                 child: Column(
