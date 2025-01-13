@@ -36,6 +36,10 @@ void _initAuth() {
       .registerFactory(() => UserSignUp(authRepository: serviceLocator()));
   serviceLocator
       .registerFactory(() => UserSignIn(authRepository: serviceLocator()));
-  serviceLocator.registerLazySingleton(() =>
-      AuthBloc(userSignUp: serviceLocator(), userSignIn: serviceLocator()));
+  serviceLocator.registerLazySingleton(
+      () => GetCurrentUser(authRepository: serviceLocator()));
+  serviceLocator.registerLazySingleton(() => AuthBloc(
+      userSignUp: serviceLocator(),
+      userSignIn: serviceLocator(),
+      getCurrentUser: serviceLocator()));
 }

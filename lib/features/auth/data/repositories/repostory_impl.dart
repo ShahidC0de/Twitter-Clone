@@ -1,4 +1,6 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:fpdart/fpdart.dart';
+import 'package:twitter_clone/core/exceptions/auth_exceptions.dart';
 import 'package:twitter_clone/core/type_def/datatype.dart';
 import 'package:twitter_clone/core/type_def/failure.dart';
 import 'package:twitter_clone/features/auth/data/remote_data_source/remote_data_source_impl.dart';
@@ -35,6 +37,24 @@ class RepostoryImpl implements AuthRepository {
       return left(
         Failure(e.toString(), StackTrace.current),
       );
+    }
+  }
+
+  @override
+  FutureEither<UserEntity> getCurrentUser() async {
+    try {
+      final response = _authRemoteDataSource.currentUserSession;
+      if (response != null) {
+        return right(UserEntity(id: response.uid, email: response.email!));
+      } else {
+        return left(Failure('User is null', StackTrace.current));
+      }
+    } on FirebaseAuthException catch (e) {
+      throw ServerException(
+          message: e.toString(), stackTrace: StackTrace.current);
+    } catch (e) {
+      throw ServerException(
+          message: e.toString(), stackTrace: StackTrace.current);
     }
   }
 }

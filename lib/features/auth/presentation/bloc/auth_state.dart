@@ -26,3 +26,13 @@ final class SignInSuccess extends AuthState {
   final UserEntity user;
   SignInSuccess({required this.user});
 }
+
+final class CurrentUserFailure extends AuthState {
+  final String message;
+  CurrentUserFailure({required this.message});
+}
+
+final class CurrentUserExist extends AuthState {
+  final UserEntity user;
+  CurrentUserExist({required this.user});
+}

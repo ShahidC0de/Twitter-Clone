@@ -15,8 +15,20 @@ void main() async {
   ], child: const MyApp()));
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   const MyApp({super.key});
+
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  @override
+  void initState() {
+    context.read<AuthBloc>().add(AuthIsUserLoggedIn());
+    // TODO: implement initState
+    super.initState();
+  }
 
   // This widget is the root of your application.
   @override

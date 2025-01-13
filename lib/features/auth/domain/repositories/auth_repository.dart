@@ -10,4 +10,5 @@ abstract interface class AuthRepository {
     required String email,
     required String password,
   });
+  FutureEither<UserEntity> getCurrentUser();
 }

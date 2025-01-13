@@ -6,6 +6,8 @@ import 'package:twitter_clone/core/exceptions/auth_exceptions.dart';
 // Want to access user-related data  -> model.Account, from models class
 
 abstract interface class AuthRemoteDataSource {
+  User? get currentUserSession;
+
   UserOfFuture<UserCredential> signUp({
     required String email,
     required String password,
@@ -21,6 +23,8 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
 
   AuthRemoteDataSourceImpl({required FirebaseAuth firebaseAuth})
       : _firebaseAuth = firebaseAuth;
+  @override
+  User? get currentUserSession => _firebaseAuth.currentUser;
 
   @override
   UserOfFuture<UserCredential> signUp(
