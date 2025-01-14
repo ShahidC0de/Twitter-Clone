@@ -44,9 +44,9 @@ class _LoginState extends State<Login> {
       body: Center(
         child: BlocConsumer<AuthBloc, AuthState>(
           listener: (context, state) {
-            if (state is SignInFailure) {
+            if (state is AuthFailure) {
               showSnackBar(context, state.message);
-            } else if (state is SignInSuccess) {
+            } else if (state is AuthSuccess) {
               Navigator.push(context, Home.route());
             }
           },

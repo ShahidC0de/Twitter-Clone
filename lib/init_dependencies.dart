@@ -27,6 +27,7 @@ Future<void> initDependencies() async {
 
 void _initAuth() {
   FirebaseAuth firebaseAuth = FirebaseAuth.instance;
+  serviceLocator.registerLazySingleton(() => AppUserCubit());
   serviceLocator.registerLazySingleton(() => firebaseAuth);
   serviceLocator.registerFactory<AuthRemoteDataSource>(
       () => AuthRemoteDataSourceImpl(firebaseAuth: serviceLocator()));
@@ -39,7 +40,9 @@ void _initAuth() {
   serviceLocator.registerLazySingleton(
       () => GetCurrentUser(authRepository: serviceLocator()));
   serviceLocator.registerLazySingleton(() => AuthBloc(
-      userSignUp: serviceLocator(),
-      userSignIn: serviceLocator(),
-      getCurrentUser: serviceLocator()));
+        userSignUp: serviceLocator(),
+        userSignIn: serviceLocator(),
+        getCurrentUser: serviceLocator(),
+        appUserCubit: serviceLocator(),
+      ));
 }

@@ -1,14 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:twitter_clone/core/cubits/app_user/app_user_cubit.dart';
 import 'package:twitter_clone/core/theme/app_theme.dart';
 import 'package:twitter_clone/features/auth/presentation/bloc/auth_bloc.dart';
-import 'package:twitter_clone/features/auth/presentation/screens/sign_up.dart';
+import 'package:twitter_clone/features/auth/presentation/screens/login.dart';
+import 'package:twitter_clone/features/home/presentation/screens/home.dart';
 import 'package:twitter_clone/init_dependencies_part.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await initDependencies();
   runApp(MultiBlocProvider(providers: [
+    BlocProvider(
+      create: (_) => serviceLocator<AppUserCubit>(),
+    ),
     BlocProvider(
       create: (_) => serviceLocator<AuthBloc>(),
     ),
@@ -26,7 +31,6 @@ class _MyAppState extends State<MyApp> {
   @override
   void initState() {
     context.read<AuthBloc>().add(AuthIsUserLoggedIn());
-    // TODO: implement initState
     super.initState();
   }
 
@@ -36,7 +40,17 @@ class _MyAppState extends State<MyApp> {
     return MaterialApp(
       title: 'Flutter Demo',
       theme: AppTheme.theme,
-      home: const SignUp(),
+      home: BlocSelector<AppUserCubit, AppUserState, bool>(
+        selector: (state) {
+          return state is AppUserLoggedIn;
+        },
+        builder: (context, state) {
+          if (state) {
+            return const Home();
+          }
+          return const Login();
+        },
+      ),
     );
   }
 }

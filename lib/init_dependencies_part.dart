@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:get_it/get_it.dart';
+import 'package:twitter_clone/core/cubits/app_user/app_user_cubit.dart';
 import 'package:twitter_clone/features/auth/data/remote_data_source/remote_data_source_impl.dart';
 import 'package:twitter_clone/features/auth/data/repositories/repostory_impl.dart';
 import 'package:twitter_clone/features/auth/domain/repositories/auth_repository.dart';

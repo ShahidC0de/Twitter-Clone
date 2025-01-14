@@ -38,9 +38,9 @@ class _SignUpState extends State<SignUp> {
           // its login so there will be textfields and when the keyboard appear for it, we dont want to be overflowed so....
           child: BlocConsumer<AuthBloc, AuthState>(
             listener: (context, state) {
-              if (state is SignUpFailure) {
+              if (state is AuthFailure) {
                 showSnackBar(context, state.message);
-              } else if (state is SignUpSuccess) {
+              } else if (state is AuthSuccess) {
                 Navigator.push(context, Login.route());
               }
             },

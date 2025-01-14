@@ -13,6 +13,14 @@ class _HomeState extends State<Home> {
   @override
   @override
   Widget build(BuildContext context) {
-    return const Scaffold();
+    return const Scaffold(
+      body: Column(
+        children: [
+          Center(
+            child: Text('logged in'),
+          )
+        ],
+      ),
+    );
   }
 }
