@@ -1,7 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:twitter_clone/core/type_def/datatype.dart';
 import 'package:twitter_clone/core/exceptions/auth_exceptions.dart';
-import 'package:twitter_clone/features/auth/data/models/user_model.dart';
+import 'package:twitter_clone/features/auth/data/models/auth_user_model.dart';
 
 // Want to sign up, want to get user account -> Account, from service class
 // Want to access user-related data  -> model.Account, from models class
@@ -9,11 +9,11 @@ import 'package:twitter_clone/features/auth/data/models/user_model.dart';
 abstract interface class AuthRemoteDataSource {
   User? get currentUserSession;
 
-  UserOfFuture<UserModel> signUp({
+  UserOfFuture<AuthUserModel> signUp({
     required String email,
     required String password,
   });
-  UserOfFuture<UserModel> signIn({
+  UserOfFuture<AuthUserModel> signIn({
     required String email,
     required String password,
   });
@@ -28,7 +28,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   User? get currentUserSession => _firebaseAuth.currentUser;
 
   @override
-  UserOfFuture<UserModel> signUp(
+  UserOfFuture<AuthUserModel> signUp(
       {required String email, required String password}) async {
     try {
       // Create a user account using Appwrite
@@ -38,7 +38,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
         password: password,
       );
       if (userCredential.user != null) {
-        return UserModel(
+        return AuthUserModel(
             id: userCredential.user!.uid,
             email: userCredential.user!.email ?? 'No Email Available');
       } else {
@@ -53,13 +53,13 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   }
 
   @override
-  UserOfFuture<UserModel> signIn(
+  UserOfFuture<AuthUserModel> signIn(
       {required String email, required String password}) async {
     try {
       final UserCredential userCredential = await _firebaseAuth
           .signInWithEmailAndPassword(email: email, password: password);
       if (userCredential.user != null) {
-        return UserModel(
+        return AuthUserModel(
             id: userCredential.user!.uid,
             email: userCredential.user!.email ?? 'No Email Available');
       } else {

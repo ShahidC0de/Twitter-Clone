@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:twitter_clone/core/cubits/app_user/app_user_cubit.dart';
 import 'package:twitter_clone/core/usecases/usecase.dart';
-import 'package:twitter_clone/core/entities/user_entity.dart';
+import 'package:twitter_clone/core/entities/auth_user_entity.dart';
 import 'package:twitter_clone/features/auth/domain/use_cases/get_current_user.dart';
 import 'package:twitter_clone/features/auth/domain/use_cases/sign_in_usecase.dart';
 import 'package:twitter_clone/features/auth/domain/use_cases/sign_up_usecase.dart';
@@ -40,7 +40,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         emit(AuthFailure(message: failure.message));
       }, (user) {
         log(user.toString());
-        _emitAuthSuccess(user, emit);
+        emit(AuthSuccess(user: user));
       });
     });
     on<SignInEvent>((event, emit) async {
@@ -65,7 +65,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     });
   }
   void _emitAuthSuccess(
-    UserEntity user,
+    AuthUserEntity user,
     Emitter<AuthState> emit,
   ) {
     _appUserCubit.updateUser(user);

@@ -1,14 +1,14 @@
 import 'package:twitter_clone/core/type_def/datatype.dart';
-import 'package:twitter_clone/core/entities/user_entity.dart';
+import 'package:twitter_clone/core/entities/auth_user_entity.dart';
 
 abstract interface class AuthRepository {
-  FutureEither<UserEntity> signUp({
+  FutureEither<AuthUserEntity> signUp({
     required String email,
     required String password,
   });
-  FutureEither<UserEntity> signIn({
+  FutureEither<AuthUserEntity> signIn({
     required String email,
     required String password,
   });
-  FutureEither<UserEntity> getCurrentUser();
+  FutureEither<AuthUserEntity> getCurrentUser();
 }

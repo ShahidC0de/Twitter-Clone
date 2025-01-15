@@ -13,11 +13,11 @@ final class AuthFailure extends AuthState {
 }
 
 final class AuthSuccess extends AuthState {
-  final UserEntity user;
+  final AuthUserEntity user;
   AuthSuccess({required this.user});
 }
 
 final class CurrentUserExist extends AuthState {
-  final UserEntity user;
+  final AuthUserEntity user;
   CurrentUserExist({required this.user});
 }

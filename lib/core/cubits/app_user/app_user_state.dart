@@ -6,7 +6,7 @@ sealed class AppUserState {}
 final class AppUserInitial extends AppUserState {}
 
 final class AppUserLoggedIn extends AppUserState {
-  final UserEntity user;
+  final AuthUserEntity user;
   AppUserLoggedIn({
     required this.user,
   });

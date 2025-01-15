@@ -41,6 +41,8 @@ class _SignUpState extends State<SignUp> {
               if (state is AuthFailure) {
                 showSnackBar(context, state.message);
               } else if (state is AuthSuccess) {
+                showSnackBar(context, 'Account Created! Please login');
+                Future.delayed(const Duration(milliseconds: 30));
                 Navigator.push(context, Login.route());
               }
             },
