@@ -17,6 +17,7 @@ Future<void> initDependencies() async {
       await Firebase.initializeApp();
     }
     _initAuth();
+    _initHome();
 
     log('Firebase Initialized');
   } catch (e) {
@@ -45,4 +46,18 @@ void _initAuth() {
         getCurrentUser: serviceLocator(),
         appUserCubit: serviceLocator(),
       ));
+}
+
+void _initHome() {
+  FirebaseFirestore firestore = FirebaseFirestore.instance;
+  serviceLocator.registerLazySingleton(() => firestore);
+  serviceLocator.registerFactory<HomeRemoteDatasource>(() =>
+      HomeRemoteDatasourceImpl(
+          firebaseAuth: serviceLocator(), firestore: serviceLocator()));
+  serviceLocator.registerFactory<HomeRepository>(
+      () => HomeRepositoryImpl(homeRemoteDatasource: serviceLocator()));
+  serviceLocator.registerFactory(
+      () => SaveUserDataUseCase(homeRepository: serviceLocator()));
+  serviceLocator.registerLazySingleton(
+      () => HomeBloc(saveUserDataUseCase: serviceLocator()));
 }

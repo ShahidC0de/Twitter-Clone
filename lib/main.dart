@@ -4,6 +4,7 @@ import 'package:twitter_clone/core/cubits/app_user/app_user_cubit.dart';
 import 'package:twitter_clone/core/theme/app_theme.dart';
 import 'package:twitter_clone/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:twitter_clone/features/auth/presentation/screens/login.dart';
+import 'package:twitter_clone/features/home/presentation/bloc/home_bloc.dart';
 import 'package:twitter_clone/features/home/presentation/screens/home.dart';
 import 'package:twitter_clone/init_dependencies_part.dart';
 
@@ -16,6 +17,9 @@ void main() async {
     ),
     BlocProvider(
       create: (_) => serviceLocator<AuthBloc>(),
+    ),
+    BlocProvider(
+      create: (_) => serviceLocator<HomeBloc>(),
     ),
   ], child: const MyApp()));
 }
