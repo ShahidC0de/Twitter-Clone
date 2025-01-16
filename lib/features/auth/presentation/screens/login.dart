@@ -47,7 +47,8 @@ class _LoginState extends State<Login> {
             if (state is AuthFailure) {
               showSnackBar(context, state.message);
             } else if (state is AuthSuccess) {
-              Navigator.push(context, Home.route());
+              Navigator.pushAndRemoveUntil(
+                  context, Home.route(), (route) => false);
             }
           },
           builder: (context, state) {
