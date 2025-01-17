@@ -13,10 +13,11 @@ import 'package:twitter_clone/features/auth/domain/use_cases/get_current_user.da
 import 'package:twitter_clone/features/auth/domain/use_cases/sign_in_usecase.dart';
 import 'package:twitter_clone/features/auth/domain/use_cases/sign_up_usecase.dart';
 import 'package:twitter_clone/features/auth/presentation/bloc/auth_bloc.dart';
-import 'package:twitter_clone/features/home/data/remote_data_source/home_remote_datasource_impl.dart';
-import 'package:twitter_clone/features/home/data/repository_impl/home_repository_impl.dart';
-import 'package:twitter_clone/features/home/domain/repositories/home_repository.dart';
-import 'package:twitter_clone/features/home/domain/usecases/save_user_data.dart';
-import 'package:twitter_clone/features/home/presentation/bloc/home_bloc.dart';
+
+import 'package:twitter_clone/features/home/features/saving_user_data/data/remote_data_source/saving_user_data_home_remote_data_source.dart';
+import 'package:twitter_clone/features/home/features/saving_user_data/data/repository_impl/repository_impl.dart';
+import 'package:twitter_clone/features/home/features/saving_user_data/domain/repositories/respository.dart';
+import 'package:twitter_clone/features/home/features/saving_user_data/domain/usecase/saving_user_data_usecase.dart';
+import 'package:twitter_clone/features/home/features/saving_user_data/presentation/bloc/saving_user_data_bloc.dart';
 
 part "init_dependencies.dart";

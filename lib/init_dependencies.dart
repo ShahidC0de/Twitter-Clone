@@ -51,13 +51,17 @@ void _initAuth() {
 void _initHome() {
   FirebaseFirestore firestore = FirebaseFirestore.instance;
   serviceLocator.registerLazySingleton(() => firestore);
-  serviceLocator.registerFactory<HomeRemoteDatasource>(() =>
-      HomeRemoteDatasourceImpl(
-          firebaseAuth: serviceLocator(), firestore: serviceLocator()));
-  serviceLocator.registerFactory<HomeRepository>(
-      () => HomeRepositoryImpl(homeRemoteDatasource: serviceLocator()));
+  serviceLocator
+      .registerFactory<SavingUserDataSource>(() => SavingUserDataSourceImpl(
+            firestore: firestore,
+            firebaseAuth: serviceLocator(),
+          ));
+  serviceLocator.registerFactory<SavingUserDataRepository>(() =>
+      SavingUserDataRepositoryImpl(savingUserDataSource: serviceLocator()));
+
   serviceLocator.registerFactory(
       () => SaveUserDataUseCase(homeRepository: serviceLocator()));
+
   serviceLocator.registerLazySingleton(
-      () => HomeBloc(saveUserDataUseCase: serviceLocator()));
+      () => SavingUserDataBloc(saveUserDataUseCase: serviceLocator()));
 }

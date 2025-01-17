@@ -2,19 +2,19 @@ import 'package:fpdart/fpdart.dart';
 import 'package:twitter_clone/core/type_def/datatype.dart';
 import 'package:twitter_clone/core/type_def/failure.dart';
 import 'package:twitter_clone/features/home/data/models/user_model.dart';
-import 'package:twitter_clone/features/home/data/remote_data_source/home_remote_datasource_impl.dart';
 import 'package:twitter_clone/features/home/domain/entities/user.dart';
-import 'package:twitter_clone/features/home/domain/repositories/home_repository.dart';
+import 'package:twitter_clone/features/home/features/saving_user_data/data/remote_data_source/saving_user_data_home_remote_data_source.dart';
+import 'package:twitter_clone/features/home/features/saving_user_data/domain/repositories/respository.dart';
 
-class HomeRepositoryImpl implements HomeRepository {
-  final HomeRemoteDatasource _homeRemoteDatasource;
-  HomeRepositoryImpl({
-    required HomeRemoteDatasource homeRemoteDatasource,
-  }) : _homeRemoteDatasource = homeRemoteDatasource;
+class SavingUserDataRepositoryImpl implements SavingUserDataRepository {
+  final SavingUserDataSource _savingUserDataSource;
+  SavingUserDataRepositoryImpl({
+    required SavingUserDataSource savingUserDataSource,
+  }) : _savingUserDataSource = savingUserDataSource;
   @override
   FutureEitherVoid saveUserData(UserEntity user) async {
     try {
-      _homeRemoteDatasource.storeUserInfo(UserModel(
+      _savingUserDataSource.storeUserInfo(UserModel(
         uid: user.uid,
         name: user.name,
         email: user.email,

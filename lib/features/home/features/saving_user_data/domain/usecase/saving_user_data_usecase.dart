@@ -1,12 +1,12 @@
 import 'package:twitter_clone/core/type_def/datatype.dart';
 import 'package:twitter_clone/core/usecases/usecase.dart';
 import 'package:twitter_clone/features/home/domain/entities/user.dart';
-import 'package:twitter_clone/features/home/domain/repositories/home_repository.dart';
+import 'package:twitter_clone/features/home/features/saving_user_data/domain/repositories/respository.dart';
 
 class SaveUserDataUseCase implements Usecase<void, UserDataParams> {
-  final HomeRepository _homeRepository;
+  final SavingUserDataRepository _homeRepository;
   SaveUserDataUseCase({
-    required HomeRepository homeRepository,
+    required SavingUserDataRepository homeRepository,
   }) : _homeRepository = homeRepository;
   @override
   FutureEitherVoid call(UserDataParams params) {

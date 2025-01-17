@@ -4,15 +4,15 @@ import 'package:twitter_clone/core/constants/constants.dart';
 import 'package:twitter_clone/core/exceptions/auth_exceptions.dart';
 import 'package:twitter_clone/features/home/data/models/user_model.dart';
 
-abstract interface class HomeRemoteDatasource {
+abstract interface class SavingUserDataSource {
   Future<void> storeUserInfo(UserModel usermodel);
   String get getCurrentUserId;
 }
 
-class HomeRemoteDatasourceImpl implements HomeRemoteDatasource {
+class SavingUserDataSourceImpl implements SavingUserDataSource {
   final FirebaseFirestore _firestore;
   final FirebaseAuth _firebaseAuth;
-  HomeRemoteDatasourceImpl({
+  SavingUserDataSourceImpl({
     required FirebaseFirestore firestore,
     required FirebaseAuth firebaseAuth,
   })  : _firestore = firestore,
