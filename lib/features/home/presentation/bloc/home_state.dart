@@ -5,11 +5,16 @@ sealed class HomeState {}
 
 final class HomeInitial extends HomeState {}
 
-final class UserDataLoading extends HomeState {}
+final class HomeCurrentUserDataFetching extends HomeState {}
 
-final class UserDataSavingFailed extends HomeState {
+final class HomeCurrentUserDataFetchingFailed extends HomeState {
   final String message;
-  UserDataSavingFailed({required this.message});
+  HomeCurrentUserDataFetchingFailed({required this.message});
 }
 
-final class UserDataSavingSucceed extends HomeState {}
+final class HomeCurrentUserDataFetched extends HomeState {
+  final Map<String, dynamic> userData;
+  HomeCurrentUserDataFetched({
+    required this.userData,
+  });
+}
