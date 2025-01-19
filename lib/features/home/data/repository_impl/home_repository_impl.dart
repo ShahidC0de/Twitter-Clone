@@ -2,7 +2,7 @@ import 'package:fpdart/fpdart.dart';
 import 'package:twitter_clone/core/type_def/datatype.dart';
 import 'package:twitter_clone/core/type_def/failure.dart';
 import 'package:twitter_clone/features/home/data/remote_data_source/home_remote_data_source.dart';
-import 'package:twitter_clone/features/home/domain/entities/user.dart';
+import 'package:twitter_clone/features/home/domain/entities/user_entity.dart';
 import 'package:twitter_clone/features/home/domain/repositories/home_repository.dart';
 
 class HomeRepositoryImpl implements HomeRepository {

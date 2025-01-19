@@ -20,12 +20,23 @@ class HomeRemoteDataSourceImpl implements HomeRemoteDataSource {
           .collection(FirebaseConstants.userCollection)
           .doc(currentUserId)
           .get();
-      final rawData = documentSnapshot.data();
-      if (rawData != null) {
-        return UserModel.fromMap(rawData as Map<String, dynamic>);
+      if (documentSnapshot.exists) {
+        final rawData = documentSnapshot.data() as Map<String, dynamic>;
+        final UserModel userModel = UserModel(
+            uid: rawData['uid'],
+            name: rawData['name'],
+            email: rawData['email'],
+            followers: rawData['followers'],
+            following: rawData['following'],
+            profilePic: rawData['profilePic'],
+            bannerPic: rawData['bannerPic'],
+            bio: rawData['bio'],
+            isTwitterBlue: rawData['isTwitterBlue']);
+        return userModel;
       } else {
         throw ServerException(
-            message: 'Data is not present', stackTrace: StackTrace.current);
+            message: 'DocumentSnapshot does not exist',
+            stackTrace: StackTrace.current);
       }
     } on FirebaseException catch (e) {
       throw ServerException(

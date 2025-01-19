@@ -2,8 +2,8 @@ class UserEntity {
   final String uid;
   final String name;
   final String email;
-  final List<String> followers;
-  final List<String> following;
+  final List<dynamic> followers;
+  final List<dynamic> following;
   final String profilePic;
   final String bannerPic;
   final String bio;

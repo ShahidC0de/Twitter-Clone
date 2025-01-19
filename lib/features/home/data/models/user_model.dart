@@ -1,4 +1,4 @@
-import 'package:twitter_clone/features/home/domain/entities/user.dart';
+import 'package:twitter_clone/features/home/domain/entities/user_entity.dart';
 
 class UserModel extends UserEntity {
   UserModel({
@@ -16,8 +16,8 @@ class UserModel extends UserEntity {
     String? uid,
     String? name,
     String? email,
-    List<String>? followers,
-    List<String>? following,
+    List<dynamic>? followers,
+    List<dynamic>? following,
     String? profilePic,
     String? bannerPic,
     String? bio,

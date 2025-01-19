@@ -8,7 +8,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:twitter_clone/core/constants/assets_constants.dart';
 import 'package:twitter_clone/core/constants/ui_constants.dart';
-import 'package:twitter_clone/core/cubits/app_user/app_user_cubit.dart';
 import 'package:twitter_clone/core/theme/pallete.dart';
 import 'package:twitter_clone/features/home/features/creating_tweet/presentation/pages/create_tweet.dart';
 import 'package:twitter_clone/features/home/presentation/bloc/home_bloc.dart';
@@ -34,7 +33,7 @@ class _HomeState extends State<Home> {
   @override
   void initState() {
     context.read<HomeBloc>().add(
-        HomeFetchCurrentUserDataEvent(userId: ' Z1wOtrZTuQbCZ3To3RucTz0Bpco2'));
+        HomeFetchCurrentUserDataEvent(userId: 'Z1wOtrZTuQbCZ3To3RucTz0Bpco2'));
     log('hi i am in init state');
     // final blocProvider = BlocProvider.of<AppUserCubit>(context);
     // final someState = blocProvider.state;

@@ -13,7 +13,7 @@ final class HomeCurrentUserDataFetchingFailed extends HomeState {
 }
 
 final class HomeCurrentUserDataFetched extends HomeState {
-  final Map<String, dynamic> userData;
+  final UserPresentationModel userData;
   HomeCurrentUserDataFetched({
     required this.userData,
   });
