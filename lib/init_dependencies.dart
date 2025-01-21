@@ -1,8 +1,13 @@
 part of 'init_dependencies_part.dart';
 
 final serviceLocator = GetIt.instance;
+Database? myDb;
+
 Future<void> initDependencies() async {
   try {
+    await getDb();
+    serviceLocator.registerLazySingleton(() => myDb!);
+
     if (Platform.isAndroid) {
       await Firebase.initializeApp(
         options: const FirebaseOptions(
@@ -16,6 +21,8 @@ Future<void> initDependencies() async {
     } else {
       await Firebase.initializeApp();
     }
+    serviceLocator.registerLazySingleton(() => AppUserCubit());
+
     _initAuth();
     _initHome();
 
@@ -26,9 +33,44 @@ Future<void> initDependencies() async {
   }
 }
 
+Future<Database> getDb() async {
+  if (myDb != null) {
+    return myDb!;
+  } else {
+    final db = openDb();
+    return db;
+  }
+}
+
+Future<Database> openDb() async {
+  try {
+    Directory directory = await getApplicationDocumentsDirectory();
+    String directoryPath = join(directory.path, 'mydb.d');
+    return await openDatabase(directoryPath, version: 1,
+        onCreate: (db, version) {
+      final tableName = LocalStorageConstants.currentUserDataTableInSQL;
+      const idColumn = 'uid';
+      const nameColumn = 'name';
+      const emailColumn = 'email';
+      const followersColumn = 'followers';
+      const followingColumn = 'following';
+      const profilePicColumn = 'profilePic';
+      const bannerPicColumn = 'bannerPic';
+      const bioColumn = 'bio';
+      const isTwitterBlueColumn = 'isTwitterBlue';
+
+      db.execute(
+          'create Table $tableName($idColumn text primary key, $nameColumn text, $emailColumn text, $followersColumn text, $followingColumn text, $profilePicColumn text, $bannerPicColumn text, $bioColumn text, $isTwitterBlueColumn integer)');
+      log('local database is been initialized');
+    });
+  } catch (e) {
+    log(e.toString());
+    throw Exception(e.toString());
+  }
+}
+
 void _initAuth() {
   FirebaseAuth firebaseAuth = FirebaseAuth.instance;
-  serviceLocator.registerLazySingleton(() => AppUserCubit());
   serviceLocator.registerLazySingleton(() => firebaseAuth);
   serviceLocator.registerFactory<AuthRemoteDataSource>(
       () => AuthRemoteDataSourceImpl(firebaseAuth: serviceLocator()));
@@ -51,29 +93,16 @@ void _initAuth() {
 void _initHome() {
   FirebaseFirestore firestore = FirebaseFirestore.instance;
   serviceLocator.registerLazySingleton(() => firestore);
-  serviceLocator.registerFactory<HomeRemoteDataSource>(
-      () => HomeRemoteDataSourceImpl(firebaseFirestore: serviceLocator()));
+  serviceLocator
+      .registerFactory<HomeRemoteDataSource>(() => HomeRemoteDataSourceImpl(
+            firebaseFirestore: serviceLocator(),
+            localDataSource: serviceLocator(),
+            firebaseAuth: serviceLocator(),
+          ));
   serviceLocator.registerFactory<HomeRepository>(
       () => HomeRepositoryImpl(homeRemoteDataSource: serviceLocator()));
   serviceLocator.registerFactory(
       () => FetchCurrentUserDataUsecase(homeRepository: serviceLocator()));
   serviceLocator.registerLazySingleton(
       () => HomeBloc(fetchCurrentUserDataUsecase: serviceLocator()));
-  _initHomeSavingUserDataBloc();
-}
-
-void _initHomeSavingUserDataBloc() {
-  serviceLocator
-      .registerFactory<SavingUserDataSource>(() => SavingUserDataSourceImpl(
-            firestore: serviceLocator(),
-            firebaseAuth: serviceLocator(),
-          ));
-  serviceLocator.registerFactory<SavingUserDataRepository>(() =>
-      SavingUserDataRepositoryImpl(savingUserDataSource: serviceLocator()));
-
-  serviceLocator.registerFactory(
-      () => SaveUserDataUseCase(homeRepository: serviceLocator()));
-
-  serviceLocator.registerLazySingleton(
-      () => SavingUserDataBloc(saveUserDataUseCase: serviceLocator()));
 }

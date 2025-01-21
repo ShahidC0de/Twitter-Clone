@@ -7,7 +7,7 @@ class UserEntity {
   final String profilePic;
   final String bannerPic;
   final String bio;
-  final String isTwitterBlue;
+  final bool isTwitterBlue;
 
   UserEntity({
     required this.uid,

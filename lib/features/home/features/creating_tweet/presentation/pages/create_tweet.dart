@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:twitter_clone/core/common/rounded_small_button.dart';
 import 'package:twitter_clone/core/theme/pallete.dart';
+import 'package:twitter_clone/features/home/presentation/bloc/home_bloc.dart';
+import 'package:twitter_clone/features/home/presentation/presentation_models/user_presentation_model.dart';
 
 class CreateTweetPage extends StatefulWidget {
   static route() =>
@@ -12,6 +15,26 @@ class CreateTweetPage extends StatefulWidget {
 }
 
 class _CreateTweetPageState extends State<CreateTweetPage> {
+  UserPresentationModel getCurrentUserData() {
+    final blocProvider = BlocProvider.of<HomeBloc>(context);
+    final state = blocProvider.state;
+    if (state is HomeCurrentUserDataFetched) {
+      return state.userData;
+    } else {
+      return UserPresentationModel(
+        uid: '',
+        name: '',
+        email: '',
+        followers: [],
+        following: [],
+        profilePic: '',
+        bannerPic: '',
+        bio: '',
+        isTwitterBlue: false,
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(

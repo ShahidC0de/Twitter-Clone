@@ -21,7 +21,7 @@ class UserModel extends UserEntity {
     String? profilePic,
     String? bannerPic,
     String? bio,
-    String? isTwitterBlue,
+    bool? isTwitterBlue,
   }) {
     return UserModel(
       uid: uid ?? this.uid,
