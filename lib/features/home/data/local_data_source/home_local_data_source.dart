@@ -20,7 +20,6 @@ class HomeLocalDataSourceImpl implements HomeLocalDataSource {
   @override
   Future<bool> insertCurrentUserData(UserModel usermodel) async {
     try {
-      await _database.delete(LocalStorageConstants.currentUserDataTableInSQL);
       int rowsEffected = await _database
           .insert(LocalStorageConstants.currentUserDataTableInSQL, {
         LocalStorageConstants.idColumn: usermodel.uid,
@@ -53,9 +52,9 @@ class HomeLocalDataSourceImpl implements HomeLocalDataSource {
           name: dataList[LocalStorageConstants.nameColumn],
           email: dataList[LocalStorageConstants.emailColumn],
           followers:
-              jsonDecode(dataList[LocalStorageConstants.followersColumn]),
+              _decodeJson(dataList[LocalStorageConstants.followersColumn]),
           following:
-              jsonDecode(dataList[LocalStorageConstants.followingColumn]),
+              _decodeJson(dataList[LocalStorageConstants.followingColumn]),
           profilePic: dataList[LocalStorageConstants.profilePicColumn],
           bannerPic: dataList[LocalStorageConstants.bannerPicColumn],
           bio: dataList[LocalStorageConstants.bioColumn],
@@ -69,6 +68,15 @@ class HomeLocalDataSourceImpl implements HomeLocalDataSource {
     } catch (e) {
       log('error while retriveing current user data ');
       return null;
+    }
+  }
+
+  List<dynamic> _decodeJson(String? jsonString) {
+    try {
+      return jsonString != null ? jsonDecode(jsonString) : [];
+    } catch (e) {
+      log('Error decoding JSON: $e');
+      return [];
     }
   }
 }

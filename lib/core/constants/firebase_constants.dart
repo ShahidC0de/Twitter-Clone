@@ -3,7 +3,7 @@ class FirebaseConstants {
 }
 
 class LocalStorageConstants {
-  static String currentUserDataTableInSQL = 'Current User Data';
+  static String currentUserDataTableInSQL = 'CurrentUserData';
   static String idColumn = 'uid';
   static String nameColumn = 'name';
   static String emailColumn = 'email';

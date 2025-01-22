@@ -1,5 +1,7 @@
 // ignore_for_file: deprecated_member_use
 
+import 'dart:developer';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -7,8 +9,10 @@ import 'package:flutter_svg/svg.dart';
 import 'package:twitter_clone/core/constants/assets_constants.dart';
 import 'package:twitter_clone/core/constants/ui_constants.dart';
 import 'package:twitter_clone/core/cubits/app_user/app_user_cubit.dart';
+import 'package:twitter_clone/core/cubits/current_user_data/current_user_data_cubit.dart';
 import 'package:twitter_clone/core/theme/pallete.dart';
 import 'package:twitter_clone/features/home/features/creating_tweet/presentation/pages/create_tweet.dart';
+import 'package:twitter_clone/features/home/presentation/bloc/home_bloc.dart';
 
 class Home extends StatefulWidget {
   static route() => MaterialPageRoute(builder: (context) => const Home());
@@ -39,6 +43,15 @@ class _HomeState extends State<Home> {
 
   @override
   void initState() {
+    context.read<HomeBloc>().add(
+        HomeFetchCurrentUserDataEvent(userId: "jJLaaUUyx8dC1cZoItd49kGHVLx1"));
+    final blocProvider = BlocProvider.of<CurrentUserDataCubit>(context);
+    final state = blocProvider.state;
+    if (state is CurrentUserDataLoaded) {
+      log(state.userData.uid);
+    } else {
+      log('not working');
+    }
     //final userId = getCurrentUserId();
     //context.read<HomeBloc>().add(HomeFetchCurrentUserDataEvent(userId: userId));
     // final blocProvider = BlocProvider.of<AppUserCubit>(context);

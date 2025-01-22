@@ -20,4 +20,16 @@ class UserEntity {
     required this.bio,
     required this.isTwitterBlue,
   });
+  bool isEmpty() {
+    return uid.isEmpty &&
+        name.isEmpty &&
+        email.isEmpty &&
+        followers.isEmpty &&
+        following.isEmpty &&
+        profilePic.isEmpty &&
+        bannerPic.isEmpty &&
+        bio.isEmpty;
+  }
+
+  bool get isNotEmpty => !isEmpty();
 }

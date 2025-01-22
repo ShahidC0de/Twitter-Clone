@@ -2,12 +2,32 @@ part of 'init_dependencies_part.dart';
 
 final serviceLocator = GetIt.instance;
 Database? myDb;
+Future<void> initSQLite() async {
+  try {
+    if (myDb != null) {
+      log('Database already exists');
+      log('Registering database');
+      serviceLocator.registerLazySingleton(() => myDb!);
+      log('Registration done');
+    } else {
+      log('Database does not exist');
+      log('Creating new database');
+
+      // Ensure you open the database here, and log every action
+      Database newDb = await openDb();
+      myDb = newDb;
+
+      log('Database created and assigned');
+      serviceLocator.registerLazySingleton(() => newDb);
+      log('Database registered');
+    }
+  } catch (e) {
+    log('Error initializing SQLite: $e');
+  }
+}
 
 Future<void> initDependencies() async {
   try {
-    await getDb();
-    serviceLocator.registerLazySingleton(() => myDb!);
-
     if (Platform.isAndroid) {
       await Firebase.initializeApp(
         options: const FirebaseOptions(
@@ -33,19 +53,18 @@ Future<void> initDependencies() async {
   }
 }
 
-Future<Database> getDb() async {
-  if (myDb != null) {
-    return myDb!;
-  } else {
-    final db = openDb();
-    return db;
-  }
-}
-
 Future<Database> openDb() async {
   try {
     Directory directory = await getApplicationDocumentsDirectory();
     String directoryPath = join(directory.path, 'mydb.d');
+
+    // Check if the database already exists, log the database path
+    log('Database path: $directoryPath');
+    final dbFile = File(directoryPath);
+    if (!dbFile.existsSync()) {
+      log('Database does not exist, creating new one.');
+    }
+
     return await openDatabase(directoryPath, version: 1,
         onCreate: (db, version) {
       final tableName = LocalStorageConstants.currentUserDataTableInSQL;
@@ -60,8 +79,8 @@ Future<Database> openDb() async {
       const isTwitterBlueColumn = 'isTwitterBlue';
 
       db.execute(
-          'create Table $tableName($idColumn text primary key, $nameColumn text, $emailColumn text, $followersColumn text, $followingColumn text, $profilePicColumn text, $bannerPicColumn text, $bioColumn text, $isTwitterBlueColumn integer)');
-      log('local database is been initialized');
+          'CREATE TABLE IF NOT EXISTS $tableName($idColumn TEXT PRIMARY KEY, $nameColumn TEXT, $emailColumn TEXT, $followersColumn TEXT, $followingColumn TEXT, $profilePicColumn TEXT, $bannerPicColumn TEXT, $bioColumn TEXT, $isTwitterBlueColumn INTEGER)');
+      log('Local database has been initialized');
     });
   } catch (e) {
     log(e.toString());
@@ -93,6 +112,10 @@ void _initAuth() {
 void _initHome() {
   FirebaseFirestore firestore = FirebaseFirestore.instance;
   serviceLocator.registerLazySingleton(() => firestore);
+  serviceLocator.registerLazySingleton<CurrentUserDataCubit>(
+      () => CurrentUserDataCubit());
+  serviceLocator.registerFactory<HomeLocalDataSource>(
+      () => HomeLocalDataSourceImpl(database: serviceLocator()));
   serviceLocator
       .registerFactory<HomeRemoteDataSource>(() => HomeRemoteDataSourceImpl(
             firebaseFirestore: serviceLocator(),
@@ -103,6 +126,7 @@ void _initHome() {
       () => HomeRepositoryImpl(homeRemoteDataSource: serviceLocator()));
   serviceLocator.registerFactory(
       () => FetchCurrentUserDataUsecase(homeRepository: serviceLocator()));
-  serviceLocator.registerLazySingleton(
-      () => HomeBloc(fetchCurrentUserDataUsecase: serviceLocator()));
+  serviceLocator.registerLazySingleton(() => HomeBloc(
+      fetchCurrentUserDataUsecase: serviceLocator(),
+      currentuserDataCubit: serviceLocator()));
 }

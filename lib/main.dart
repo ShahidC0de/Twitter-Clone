@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:twitter_clone/core/cubits/app_user/app_user_cubit.dart';
+import 'package:twitter_clone/core/cubits/current_user_data/current_user_data_cubit.dart';
 import 'package:twitter_clone/core/theme/app_theme.dart';
 import 'package:twitter_clone/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:twitter_clone/features/auth/presentation/screens/login.dart';
@@ -10,10 +11,14 @@ import 'package:twitter_clone/init_dependencies_part.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await initSQLite();
   await initDependencies();
   runApp(MultiBlocProvider(providers: [
     BlocProvider(
       create: (_) => serviceLocator<AppUserCubit>(),
+    ),
+    BlocProvider(
+      create: (_) => serviceLocator<CurrentUserDataCubit>(),
     ),
     BlocProvider(
       create: (_) => serviceLocator<AuthBloc>(),

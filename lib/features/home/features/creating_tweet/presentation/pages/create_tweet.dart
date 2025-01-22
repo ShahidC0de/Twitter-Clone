@@ -3,7 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:twitter_clone/core/common/rounded_small_button.dart';
 import 'package:twitter_clone/core/theme/pallete.dart';
 import 'package:twitter_clone/features/home/presentation/bloc/home_bloc.dart';
-import 'package:twitter_clone/features/home/presentation/presentation_models/user_presentation_model.dart';
+import 'package:twitter_clone/core/entities/user_presentation_model.dart';
 
 class CreateTweetPage extends StatefulWidget {
   static route() =>
