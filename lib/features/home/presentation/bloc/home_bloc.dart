@@ -19,7 +19,6 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
   })  : _fetchCurrentUserDataUsecase = fetchCurrentUserDataUsecase,
         _currentUserDataCubit = currentuserDataCubit,
         super(HomeInitial()) {
-    on<HomeEvent>((event, emit) {});
     on<HomeFetchCurrentUserDataEvent>((event, emit) async {
       emit(HomeCurrentUserDataFetching());
       final response = await _fetchCurrentUserDataUsecase
@@ -35,7 +34,12 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
   }
   void _emitSuccessState(
       UserPresentationModel userPresentationModel, Emitter<HomeState> emit) {
+    log('emitting success and updating the user in currentusercubit');
+    log(userPresentationModel.uid);
+
     _currentUserDataCubit.updateUser(userPresentationModel);
+    log('updated the user in currentusercubit');
+
     emit(HomeCurrentUserDataFetched(userData: userPresentationModel));
   }
 }

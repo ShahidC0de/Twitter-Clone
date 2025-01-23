@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'dart:developer';
-
 import 'package:sqflite/sqflite.dart';
 import 'package:twitter_clone/core/constants/constants.dart';
 import 'package:twitter_clone/features/home/data/models/user_model.dart';
@@ -12,7 +11,6 @@ abstract interface class HomeLocalDataSource {
 
 class HomeLocalDataSourceImpl implements HomeLocalDataSource {
   final Database _database;
-
   HomeLocalDataSourceImpl({
     required Database database,
   }) : _database = database;
@@ -20,20 +18,60 @@ class HomeLocalDataSourceImpl implements HomeLocalDataSource {
   @override
   Future<bool> insertCurrentUserData(UserModel usermodel) async {
     try {
-      int rowsEffected = await _database
-          .insert(LocalStorageConstants.currentUserDataTableInSQL, {
-        LocalStorageConstants.idColumn: usermodel.uid,
-        LocalStorageConstants.nameColumn: usermodel.name,
-        LocalStorageConstants.emailColumn: usermodel.email,
-        LocalStorageConstants.followersColumn: jsonEncode(usermodel.followers),
-        LocalStorageConstants.followingColumn: jsonEncode(usermodel.following),
-        LocalStorageConstants.profilePicColumn: usermodel.profilePic,
-        LocalStorageConstants.bannerPicColumn: usermodel.bannerPic,
-        LocalStorageConstants.bioColumn: usermodel.bio,
-        LocalStorageConstants.isTwitterBlueColumn:
-            usermodel.isTwitterBlue == true ? 1 : 0,
-      });
-      return rowsEffected > 0;
+      final existingUserData = await _database.query(
+        LocalStorageConstants.currentUserDataTableInSQL,
+        where: '${LocalStorageConstants.idColumn} = ?',
+        whereArgs: [usermodel.uid],
+      );
+      if (existingUserData.isNotEmpty) {
+        log('data exist');
+
+        await _database.update(
+          LocalStorageConstants.currentUserDataTableInSQL,
+          where: '${LocalStorageConstants.idColumn}= ?',
+          whereArgs: [usermodel.uid],
+          {
+            LocalStorageConstants.nameColumn: usermodel.name,
+            LocalStorageConstants.emailColumn: usermodel.email,
+            LocalStorageConstants.followersColumn:
+                jsonEncode(usermodel.followers),
+            LocalStorageConstants.followingColumn:
+                jsonEncode(usermodel.following),
+            LocalStorageConstants.profilePicColumn: usermodel.profilePic,
+            LocalStorageConstants.bannerPicColumn: usermodel.bannerPic,
+            LocalStorageConstants.bioColumn: usermodel.bio,
+            LocalStorageConstants.isTwitterBlueColumn:
+                usermodel.isTwitterBlue == true ? 1 : 0,
+          },
+          conflictAlgorithm: ConflictAlgorithm.replace,
+        );
+        log('user data updated');
+        log('returning true');
+
+        return true;
+      } else {
+        log('user data does not exist, inserting the data');
+        int rowsEffected = await _database.insert(
+          LocalStorageConstants.currentUserDataTableInSQL,
+          {
+            LocalStorageConstants.idColumn: usermodel.uid,
+            LocalStorageConstants.nameColumn: usermodel.name,
+            LocalStorageConstants.emailColumn: usermodel.email,
+            LocalStorageConstants.followersColumn:
+                jsonEncode(usermodel.followers),
+            LocalStorageConstants.followingColumn:
+                jsonEncode(usermodel.following),
+            LocalStorageConstants.profilePicColumn: usermodel.profilePic,
+            LocalStorageConstants.bannerPicColumn: usermodel.bannerPic,
+            LocalStorageConstants.bioColumn: usermodel.bio,
+            LocalStorageConstants.isTwitterBlueColumn:
+                usermodel.isTwitterBlue == true ? 1 : 0,
+          },
+        );
+        log('insertion completed return rows effect and its a success');
+
+        return rowsEffected > 0;
+      }
     } catch (e) {
       log('Error inserting user data: $e');
       return false;

@@ -8,7 +8,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:twitter_clone/core/constants/assets_constants.dart';
 import 'package:twitter_clone/core/constants/ui_constants.dart';
-import 'package:twitter_clone/core/cubits/app_user/app_user_cubit.dart';
 import 'package:twitter_clone/core/cubits/current_user_data/current_user_data_cubit.dart';
 import 'package:twitter_clone/core/theme/pallete.dart';
 import 'package:twitter_clone/features/home/features/creating_tweet/presentation/pages/create_tweet.dart';
@@ -32,35 +31,11 @@ class _HomeState extends State<Home> {
     });
   }
 
-  String getCurrentUserId() {
-    final blocProvider = BlocProvider.of<AppUserCubit>(context);
-    final state = blocProvider.state;
-    if (state is AppUserLoggedIn) {
-      return state.user.id;
-    }
-    return '';
-  }
-
   @override
   void initState() {
     context.read<HomeBloc>().add(
-        HomeFetchCurrentUserDataEvent(userId: "jJLaaUUyx8dC1cZoItd49kGHVLx1"));
-    final blocProvider = BlocProvider.of<CurrentUserDataCubit>(context);
-    final state = blocProvider.state;
-    if (state is CurrentUserDataLoaded) {
-      log(state.userData.uid);
-    } else {
-      log('not working');
-    }
-    //final userId = getCurrentUserId();
-    //context.read<HomeBloc>().add(HomeFetchCurrentUserDataEvent(userId: userId));
-    // final blocProvider = BlocProvider.of<AppUserCubit>(context);
-    // final someState = blocProvider.state;
-    // Z1wOtrZTuQbCZ3To3RucTz0Bpco2
-    // if (someState is AppUserLoggedIn) {
-    //   final userId = someState.user.id;
+        HomeFetchCurrentUserDataEvent(userId: "NyGnaafKlybWYLVKzVZU0LpCps92"));
 
-    // }
     super.initState();
   }
 
@@ -93,10 +68,20 @@ class _HomeState extends State<Home> {
               color: Pallete.whiteColor,
             )),
           ]),
-      body: IndexedStack(
-        index: _page,
-        children: UiConstants.bottomTapBarScreens,
+      body: BlocListener<CurrentUserDataCubit, CurrentUserDataState>(
+        listener: (context, state) {
+          if (state is CurrentUserDataLoaded) {
+            log(state.userData.uid);
+          } else {
+            log('state is not the desired one');
+          }
+        },
+        child: IndexedStack(
+          index: _page,
+          children: UiConstants.bottomTapBarScreens,
+        ),
       ),
+
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           Navigator.push(context, CreateTweetPage.route());

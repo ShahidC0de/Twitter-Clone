@@ -11,7 +11,7 @@ import 'package:twitter_clone/init_dependencies_part.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await initSQLite();
+
   await initDependencies();
   runApp(MultiBlocProvider(providers: [
     BlocProvider(

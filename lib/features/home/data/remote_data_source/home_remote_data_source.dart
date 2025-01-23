@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:twitter_clone/core/constants/constants.dart';
@@ -42,7 +44,10 @@ class HomeRemoteDataSourceImpl implements HomeRemoteDataSource {
             bannerPic: rawData['bannerPic'],
             bio: rawData['bio'],
             isTwitterBlue: rawData['isTwitterBlue']);
-        await _localDataSource.insertCurrentUserData(userModel);
+        bool rowsEffected =
+            await _localDataSource.insertCurrentUserData(userModel);
+        log(rowsEffected.toString());
+        log('returning the usermodel');
 
         return userModel;
       } else {

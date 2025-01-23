@@ -2,32 +2,10 @@ part of 'init_dependencies_part.dart';
 
 final serviceLocator = GetIt.instance;
 Database? myDb;
-Future<void> initSQLite() async {
-  try {
-    if (myDb != null) {
-      log('Database already exists');
-      log('Registering database');
-      serviceLocator.registerLazySingleton(() => myDb!);
-      log('Registration done');
-    } else {
-      log('Database does not exist');
-      log('Creating new database');
-
-      // Ensure you open the database here, and log every action
-      Database newDb = await openDb();
-      myDb = newDb;
-
-      log('Database created and assigned');
-      serviceLocator.registerLazySingleton(() => newDb);
-      log('Database registered');
-    }
-  } catch (e) {
-    log('Error initializing SQLite: $e');
-  }
-}
-
 Future<void> initDependencies() async {
   try {
+    final myDB = await _getDb();
+    serviceLocator.registerLazySingleton<Database>(() => myDB);
     if (Platform.isAndroid) {
       await Firebase.initializeApp(
         options: const FirebaseOptions(
@@ -53,37 +31,37 @@ Future<void> initDependencies() async {
   }
 }
 
-Future<Database> openDb() async {
+Future<Database> _getDb() async {
+  if (myDb == null) {
+    final db = await _openDb();
+    return db;
+  } else {
+    final db = myDb;
+    return db!;
+  }
+}
+
+Future<Database> _openDb() async {
   try {
+    final tableName = LocalStorageConstants.currentUserDataTableInSQL;
+    const idColumn = 'uid';
+    const nameColumn = 'name';
+    const emailColumn = 'email';
+    const followersColumn = 'followers';
+    const followingColumn = 'following';
+    const profilePicColumn = 'profilePic';
+    const bannerPicColumn = 'bannerPic';
+    const bioColumn = 'bio';
+    const isTwitterBlueColumn = 'isTwitterBlue';
+    // application directory = android/data/data/ app<package name>/files
     Directory directory = await getApplicationDocumentsDirectory();
-    String directoryPath = join(directory.path, 'mydb.d');
-
-    // Check if the database already exists, log the database path
-    log('Database path: $directoryPath');
-    final dbFile = File(directoryPath);
-    if (!dbFile.existsSync()) {
-      log('Database does not exist, creating new one.');
-    }
-
+    String directoryPath = join(directory.path, 'mydb.db');
     return await openDatabase(directoryPath, version: 1,
         onCreate: (db, version) {
-      final tableName = LocalStorageConstants.currentUserDataTableInSQL;
-      const idColumn = 'uid';
-      const nameColumn = 'name';
-      const emailColumn = 'email';
-      const followersColumn = 'followers';
-      const followingColumn = 'following';
-      const profilePicColumn = 'profilePic';
-      const bannerPicColumn = 'bannerPic';
-      const bioColumn = 'bio';
-      const isTwitterBlueColumn = 'isTwitterBlue';
-
       db.execute(
-          'CREATE TABLE IF NOT EXISTS $tableName($idColumn TEXT PRIMARY KEY, $nameColumn TEXT, $emailColumn TEXT, $followersColumn TEXT, $followingColumn TEXT, $profilePicColumn TEXT, $bannerPicColumn TEXT, $bioColumn TEXT, $isTwitterBlueColumn INTEGER)');
-      log('Local database has been initialized');
+          'create table $tableName($idColumn TEXT PRIMARY KEY , $nameColumn TEXT, $emailColumn TEXT, $followersColumn TEXT, $followingColumn TEXT, $profilePicColumn TEXT, $bannerPicColumn TEXT, $bioColumn TEXT, $isTwitterBlueColumn INTEGER)');
     });
   } catch (e) {
-    log(e.toString());
     throw Exception(e.toString());
   }
 }
