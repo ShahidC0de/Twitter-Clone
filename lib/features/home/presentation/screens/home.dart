@@ -33,9 +33,6 @@ class _HomeState extends State<Home> {
 
   @override
   void initState() {
-    context.read<HomeBloc>().add(
-        HomeFetchCurrentUserDataEvent(userId: "NyGnaafKlybWYLVKzVZU0LpCps92"));
-
     super.initState();
   }
 
@@ -84,6 +81,8 @@ class _HomeState extends State<Home> {
 
       floatingActionButton: FloatingActionButton(
         onPressed: () {
+          context.read<HomeBloc>().add(HomeFetchCurrentUserDataEvent(
+              userId: "NyGnaafKlybWYLVKzVZU0LpCps92"));
           Navigator.push(context, CreateTweetPage.route());
         },
         child: const Icon(Icons.add),

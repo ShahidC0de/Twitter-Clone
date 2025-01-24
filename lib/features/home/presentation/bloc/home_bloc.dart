@@ -27,6 +27,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
         emit(HomeCurrentUserDataFetchingFailed(message: failure.message));
         log(failure.message);
       }, (success) {
+        log(success.profilePic);
         _emitSuccessState(success.toPresentationModel(), emit);
         log(success.name);
       });

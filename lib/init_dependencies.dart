@@ -53,7 +53,6 @@ Future<Database> _openDb() async {
     const bannerPicColumn = 'bannerPic';
     const bioColumn = 'bio';
     const isTwitterBlueColumn = 'isTwitterBlue';
-    // application directory = android/data/data/ app<package name>/files
     Directory directory = await getApplicationDocumentsDirectory();
     String directoryPath = join(directory.path, 'mydb.db');
     return await openDatabase(directoryPath, version: 1,
