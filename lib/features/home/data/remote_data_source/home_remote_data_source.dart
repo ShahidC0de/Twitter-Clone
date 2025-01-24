@@ -1,10 +1,7 @@
-import 'dart:developer';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:twitter_clone/core/constants/constants.dart';
 import 'package:twitter_clone/core/exceptions/auth_exceptions.dart';
-import 'package:twitter_clone/features/home/data/local_data_source/home_local_data_source.dart';
 import 'package:twitter_clone/features/home/data/models/user_model.dart';
 
 abstract interface class HomeRemoteDataSource {
@@ -16,13 +13,10 @@ abstract interface class HomeRemoteDataSource {
 class HomeRemoteDataSourceImpl implements HomeRemoteDataSource {
   final FirebaseAuth _firebaseAuth;
   final FirebaseFirestore _firebaseFirestore;
-  final HomeLocalDataSource _localDataSource;
   HomeRemoteDataSourceImpl({
-    required HomeLocalDataSource localDataSource,
     required FirebaseFirestore firebaseFirestore,
     required FirebaseAuth firebaseAuth,
   })  : _firebaseFirestore = firebaseFirestore,
-        _localDataSource = localDataSource,
         _firebaseAuth = firebaseAuth;
 
   @override
@@ -44,10 +38,6 @@ class HomeRemoteDataSourceImpl implements HomeRemoteDataSource {
             bannerPic: rawData['bannerPic'],
             bio: rawData['bio'],
             isTwitterBlue: rawData['isTwitterBlue']);
-        bool rowsEffected =
-            await _localDataSource.insertCurrentUserData(userModel);
-        log(rowsEffected.toString());
-        log('returning the usermodel');
 
         return userModel;
       } else {

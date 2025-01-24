@@ -96,11 +96,11 @@ void _initHome() {
   serviceLocator
       .registerFactory<HomeRemoteDataSource>(() => HomeRemoteDataSourceImpl(
             firebaseFirestore: serviceLocator(),
-            localDataSource: serviceLocator(),
             firebaseAuth: serviceLocator(),
           ));
-  serviceLocator.registerFactory<HomeRepository>(
-      () => HomeRepositoryImpl(homeRemoteDataSource: serviceLocator()));
+  serviceLocator.registerFactory<HomeRepository>(() => HomeRepositoryImpl(
+      homeRemoteDataSource: serviceLocator(),
+      homeLocalDataSource: serviceLocator()));
   serviceLocator.registerFactory(
       () => FetchCurrentUserDataUsecase(homeRepository: serviceLocator()));
   serviceLocator.registerLazySingleton(() => HomeBloc(

@@ -1,3 +1,5 @@
+import 'package:twitter_clone/features/home/data/models/user_model.dart';
+
 class UserEntity {
   final String uid;
   final String name;
@@ -32,4 +34,19 @@ class UserEntity {
   }
 
   bool get isNotEmpty => !isEmpty();
+}
+
+extension UserEntityMapper on UserEntity {
+  UserModel toUserModel() {
+    return UserModel(
+        uid: uid,
+        name: name,
+        email: email,
+        followers: followers,
+        following: following,
+        profilePic: profilePic,
+        bannerPic: bannerPic,
+        bio: bio,
+        isTwitterBlue: isTwitterBlue);
+  }
 }

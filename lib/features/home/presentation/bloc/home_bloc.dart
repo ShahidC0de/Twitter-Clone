@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:twitter_clone/core/cubits/current_user_data/current_user_data_cubit.dart';
@@ -25,21 +23,14 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
           .call(UserIdParams(userId: event.userId));
       response.fold((failure) {
         emit(HomeCurrentUserDataFetchingFailed(message: failure.message));
-        log(failure.message);
       }, (success) {
-        log(success.profilePic);
         _emitSuccessState(success.toPresentationModel(), emit);
-        log(success.name);
       });
     });
   }
   void _emitSuccessState(
       UserPresentationModel userPresentationModel, Emitter<HomeState> emit) {
-    log('emitting success and updating the user in currentusercubit');
-    log(userPresentationModel.uid);
-
     _currentUserDataCubit.updateUser(userPresentationModel);
-    log('updated the user in currentusercubit');
 
     emit(HomeCurrentUserDataFetched(userData: userPresentationModel));
   }

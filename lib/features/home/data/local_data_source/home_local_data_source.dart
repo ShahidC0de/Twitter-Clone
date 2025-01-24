@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:developer';
 import 'package:sqflite/sqflite.dart';
 import 'package:twitter_clone/core/constants/constants.dart';
 import 'package:twitter_clone/features/home/data/models/user_model.dart';
@@ -24,8 +23,6 @@ class HomeLocalDataSourceImpl implements HomeLocalDataSource {
         whereArgs: [usermodel.uid],
       );
       if (existingUserData.isNotEmpty) {
-        log('data exist');
-
         await _database.update(
           LocalStorageConstants.currentUserDataTableInSQL,
           where: '${LocalStorageConstants.idColumn}= ?',
@@ -45,12 +42,9 @@ class HomeLocalDataSourceImpl implements HomeLocalDataSource {
           },
           conflictAlgorithm: ConflictAlgorithm.replace,
         );
-        log('user data updated');
-        log('returning true');
 
         return true;
       } else {
-        log('user data does not exist, inserting the data');
         int rowsEffected = await _database.insert(
           LocalStorageConstants.currentUserDataTableInSQL,
           {
@@ -68,12 +62,10 @@ class HomeLocalDataSourceImpl implements HomeLocalDataSource {
                 usermodel.isTwitterBlue == true ? 1 : 0,
           },
         );
-        log('insertion completed return rows effect and its a success');
 
         return rowsEffected > 0;
       }
     } catch (e) {
-      log('Error inserting user data: $e');
       return false;
     }
   }
@@ -104,7 +96,6 @@ class HomeLocalDataSourceImpl implements HomeLocalDataSource {
       }
       return null;
     } catch (e) {
-      log('error while retriveing current user data ');
       return null;
     }
   }
@@ -113,7 +104,6 @@ class HomeLocalDataSourceImpl implements HomeLocalDataSource {
     try {
       return jsonString != null ? jsonDecode(jsonString) : [];
     } catch (e) {
-      log('Error decoding JSON: $e');
       return [];
     }
   }
