@@ -106,4 +106,21 @@ void _initHome() {
   serviceLocator.registerLazySingleton(() => HomeBloc(
       fetchCurrentUserDataUsecase: serviceLocator(),
       currentuserDataCubit: serviceLocator()));
+  _initCreateTweet();
+}
+
+void _initCreateTweet() {
+  FirebaseStorage firebaseStorage = FirebaseStorage.instance;
+  serviceLocator.registerLazySingleton(() => firebaseStorage);
+  serviceLocator.registerFactory<CreateTweetRemoteDataSource>(() =>
+      CreateTweetRemoteDataSourceImpl(
+          firebaseFirestore: serviceLocator(),
+          firebaseStorage: serviceLocator()));
+  serviceLocator.registerFactory<CreateTweetRepository>(() =>
+      CreateTweetRepositoryImpl(createTweetRemoteDataSource: serviceLocator()));
+  serviceLocator.registerFactory(() => TweetParser());
+  serviceLocator.registerFactory(() => CreateTweetUsecase(
+      createTweetRepository: serviceLocator(), tweetParser: serviceLocator()));
+  serviceLocator.registerLazySingleton(
+      () => CreateTweetBloc(createTweetUsecase: serviceLocator()));
 }

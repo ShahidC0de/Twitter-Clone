@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:carousel_slider/carousel_slider.dart';
@@ -10,6 +11,7 @@ import 'package:twitter_clone/core/cubits/current_user_data/current_user_data_cu
 import 'package:twitter_clone/core/theme/pallete.dart';
 import 'package:twitter_clone/core/entities/user_presentation_model.dart';
 import 'package:twitter_clone/core/utils/utilities.dart';
+import 'package:twitter_clone/features/home/features/creating_tweet/presentation/bloc/create_tweet_bloc.dart';
 
 class CreateTweetPage extends StatefulWidget {
   static route() =>
@@ -47,7 +49,15 @@ class _CreateTweetPageState extends State<CreateTweetPage> {
       appBar: AppBar(
         actions: [
           RoundedSmallButton(
-            onTap: () {},
+            onTap: () {
+              context.read<CreateTweetBloc>().add(CreateUserTweetEvent(
+                    userId: userData!.uid,
+                    tweetText: tweetController.text,
+                    tweetImages:
+                        pickedImages.map((image) => image.path).toList(),
+                  ));
+              log('button Clicked');
+            },
             label: 'Create',
             backgroundColor: Pallete.blueColor,
             textColor: Pallete.whiteColor,

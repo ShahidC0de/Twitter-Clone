@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:twitter_clone/features/home/features/creating_tweet/domain/usecases/create_tweet_usecase.dart';
@@ -13,6 +15,7 @@ class CreateTweetBloc extends Bloc<CreateTweetEvent, CreateTweetState> {
         super(CreateTweetInitial()) {
     on<CreateTweetEvent>((event, emit) {});
     on<CreateUserTweetEvent>((event, emit) async {
+      log('i am in Bloc');
       final response = await _createTweetUsecase.call(CreateTweetParams(
           userId: event.userId,
           tweetText: event.tweetText,

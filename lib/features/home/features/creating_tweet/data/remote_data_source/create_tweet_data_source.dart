@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -21,6 +22,7 @@ class CreateTweetRemoteDataSourceImpl implements CreateTweetRemoteDataSource {
   @override
   Future<void> shareTweet({required Tweetmodel tweetModel}) async {
     try {
+      log('and here i am in remote data source');
       List<String> imageUrls = [];
       if (tweetModel.imageList.isNotEmpty) {
         imageUrls = await _storeImagesInFirebaseStorage(tweetModel);

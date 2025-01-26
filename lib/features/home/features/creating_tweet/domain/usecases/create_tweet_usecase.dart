@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:twitter_clone/core/enums/tweet_type_enum.dart';
 import 'package:twitter_clone/core/type_def/datatype.dart';
 import 'package:twitter_clone/core/usecases/usecase.dart';
@@ -17,6 +19,7 @@ class CreateTweetUsecase implements Usecase<void, CreateTweetParams> {
 
   @override
   FutureEither<void> call(CreateTweetParams params) async {
+    log('i am in createtweetusecase');
     final hashTags = _tweetParser.getHashTagsFromText(params.tweetText);
     final link = _tweetParser.getLinkFromTheText(params.tweetText);
     Tweet tweet = Tweet(

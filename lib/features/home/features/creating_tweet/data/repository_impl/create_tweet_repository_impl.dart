@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:fpdart/fpdart.dart';
 import 'package:twitter_clone/core/type_def/datatype.dart';
 import 'package:twitter_clone/core/type_def/failure.dart';
@@ -14,6 +16,7 @@ class CreateTweetRepositoryImpl implements CreateTweetRepository {
   @override
   FutureEither<void> createTweet(Tweet tweet) async {
     try {
+      log('i am in repository impl');
       final response = await _createTweetRemoteDataSource.shareTweet(
           tweetModel: tweet.toTweetModel());
 
