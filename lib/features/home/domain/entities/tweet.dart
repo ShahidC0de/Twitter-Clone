@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:twitter_clone/core/enums/tweet_type_enum.dart';
-import 'package:twitter_clone/features/home/features/creating_tweet/data/models/tweetmodel.dart';
+import 'package:twitter_clone/features/home/data/models/tweetmodel.dart';
 
 @immutable
 class Tweet {

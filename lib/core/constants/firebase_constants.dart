@@ -1,5 +1,6 @@
 class FirebaseConstants {
   static String userCollection = 'Users';
+  static String usersTweetsCollection = 'UserTweets';
 }
 
 class LocalStorageConstants {

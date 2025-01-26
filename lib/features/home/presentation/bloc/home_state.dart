@@ -18,3 +18,15 @@ final class HomeCurrentUserDataFetched extends HomeState {
     required this.userData,
   });
 }
+
+final class HomeFetchAllTweetsSuccess extends HomeState {
+  final List<Tweet> tweets;
+  HomeFetchAllTweetsSuccess({
+    required this.tweets,
+  });
+}
+
+final class HomeFetchAllTweetsFailure extends HomeState {
+  final String message;
+  HomeFetchAllTweetsFailure({required this.message});
+}

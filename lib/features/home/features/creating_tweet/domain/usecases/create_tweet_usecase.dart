@@ -4,7 +4,7 @@ import 'package:twitter_clone/core/enums/tweet_type_enum.dart';
 import 'package:twitter_clone/core/type_def/datatype.dart';
 import 'package:twitter_clone/core/usecases/usecase.dart';
 import 'package:twitter_clone/features/home/features/creating_tweet/core/utils/tweet_parser.dart';
-import 'package:twitter_clone/features/home/features/creating_tweet/domain/entities/tweet.dart';
+import 'package:twitter_clone/features/home/domain/entities/tweet.dart';
 import 'package:twitter_clone/features/home/features/creating_tweet/domain/repository/create_tweet_repository.dart';
 
 class CreateTweetUsecase implements Usecase<void, CreateTweetParams> {

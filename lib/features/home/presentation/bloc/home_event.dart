@@ -9,3 +9,5 @@ final class HomeFetchCurrentUserDataEvent extends HomeEvent {
     required this.userId,
   });
 }
+
+final class HomeFetchAllTweetsEvent extends HomeEvent {}

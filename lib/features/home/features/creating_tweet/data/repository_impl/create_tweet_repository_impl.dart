@@ -4,7 +4,7 @@ import 'package:fpdart/fpdart.dart';
 import 'package:twitter_clone/core/type_def/datatype.dart';
 import 'package:twitter_clone/core/type_def/failure.dart';
 import 'package:twitter_clone/features/home/features/creating_tweet/data/remote_data_source/create_tweet_data_source.dart';
-import 'package:twitter_clone/features/home/features/creating_tweet/domain/entities/tweet.dart';
+import 'package:twitter_clone/features/home/domain/entities/tweet.dart';
 import 'package:twitter_clone/features/home/features/creating_tweet/domain/repository/create_tweet_repository.dart';
 
 class CreateTweetRepositoryImpl implements CreateTweetRepository {

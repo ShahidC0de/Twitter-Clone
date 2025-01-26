@@ -1,9 +1,10 @@
 import 'dart:developer';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:twitter_clone/core/constants/constants.dart';
 import 'package:twitter_clone/core/data_source/firebase_storage_data_source.dart';
 import 'package:twitter_clone/core/exceptions/auth_exceptions.dart';
-import 'package:twitter_clone/features/home/features/creating_tweet/data/models/tweetmodel.dart';
+import 'package:twitter_clone/features/home/data/models/tweetmodel.dart';
 
 abstract interface class CreateTweetRemoteDataSource {
   Future<void> shareTweet({required Tweetmodel tweetModel});
@@ -30,7 +31,7 @@ class CreateTweetRemoteDataSourceImpl implements CreateTweetRemoteDataSource {
 
       final Tweetmodel tweet = tweetModel.copyWith(imageList: imageUrls);
       await _firebaseFirestore
-          .collection('UserTweets')
+          .collection(FirebaseConstants.usersTweetsCollection)
           .doc(tweet.userId)
           .collection(tweet.userId)
           .doc(tweet.tweetId)

@@ -1,5 +1,5 @@
 import 'package:twitter_clone/core/enums/tweet_type_enum.dart';
-import 'package:twitter_clone/features/home/features/creating_tweet/domain/entities/tweet.dart';
+import 'package:twitter_clone/features/home/domain/entities/tweet.dart';
 
 class Tweetmodel extends Tweet {
   const Tweetmodel(
@@ -34,17 +34,23 @@ class Tweetmodel extends Tweet {
   // from Map
   factory Tweetmodel.fromMap(Map<String, dynamic> map) {
     return Tweetmodel(
-        text: map['text'] ?? '',
-        hashtags: List<String>.from(map['hashtags']),
-        link: map['link'],
-        imageList: List<String>.from(['imageList']),
-        userId: map['userId'],
-        tweetType: (map['tweetType'] as String).toTweetTypeEnum(),
-        tweetedAt: DateTime.fromMillisecondsSinceEpoch(map['tweetedAt']),
-        likes: List<String>.from(map['likes']),
-        commentIds: List<String>.from(map['commentIds']),
-        tweetId: map['tweetId'],
-        reshareCount: map['reshareCount'] as int);
+      text: map['text'] ?? '',
+      hashtags: List<String>.from(map['hashtags'] ?? []),
+      link: map['link'] ?? '',
+      imageList:
+          List<String>.from(map['imageList'] ?? []), // Fixed imageList issue
+      userId: map['userId'] ?? '', // Null check for userId
+      tweetType: (map['tweetType'] as String?)?.toTweetTypeEnum() ??
+          TweetType.text, // Handle invalid enum values
+      tweetedAt: map['tweetedAt'] != null
+          ? DateTime.fromMillisecondsSinceEpoch(map['tweetedAt'])
+          : DateTime.now(), // Handle null tweetedAt
+      likes: List<String>.from(map['likes'] ?? []),
+      commentIds: List<String>.from(map['commentIds'] ?? []),
+      tweetId: map['tweetId'] ?? '', // Null check for tweetId
+      reshareCount:
+          map['reshareCount'] as int? ?? 0, // Ensure reshareCount is non-null
+    );
   }
   Tweetmodel copyWith({
     String? text,
