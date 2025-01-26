@@ -111,11 +111,14 @@ void _initHome() {
 
 void _initCreateTweet() {
   FirebaseStorage firebaseStorage = FirebaseStorage.instance;
-  serviceLocator.registerLazySingleton(() => firebaseStorage);
-  serviceLocator.registerFactory<CreateTweetRemoteDataSource>(() =>
-      CreateTweetRemoteDataSourceImpl(
-          firebaseFirestore: serviceLocator(),
-          firebaseStorage: serviceLocator()));
+  serviceLocator.registerLazySingleton<FirebaseStorage>(() => firebaseStorage);
+  serviceLocator.registerFactory<FirebaseStorageDataSource>(
+      () => FirebaseStorageDataSourceImpl(firebaseStorage: serviceLocator()));
+  serviceLocator.registerFactory<CreateTweetRemoteDataSource>(
+      () => CreateTweetRemoteDataSourceImpl(
+            firebaseFirestore: serviceLocator(),
+            firebaseStorageDataSource: serviceLocator(),
+          ));
   serviceLocator.registerFactory<CreateTweetRepository>(() =>
       CreateTweetRepositoryImpl(createTweetRemoteDataSource: serviceLocator()));
   serviceLocator.registerFactory(() => TweetParser());

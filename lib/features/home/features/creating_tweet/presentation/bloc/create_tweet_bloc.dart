@@ -15,6 +15,7 @@ class CreateTweetBloc extends Bloc<CreateTweetEvent, CreateTweetState> {
         super(CreateTweetInitial()) {
     on<CreateTweetEvent>((event, emit) {});
     on<CreateUserTweetEvent>((event, emit) async {
+      emit(CreatingTweetLoading());
       log('i am in Bloc');
       final response = await _createTweetUsecase.call(CreateTweetParams(
           userId: event.userId,

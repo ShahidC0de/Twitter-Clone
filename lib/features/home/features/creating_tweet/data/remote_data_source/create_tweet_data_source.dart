@@ -1,8 +1,7 @@
 import 'dart:developer';
-import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_storage/firebase_storage.dart';
+import 'package:twitter_clone/core/data_source/firebase_storage_data_source.dart';
 import 'package:twitter_clone/core/exceptions/auth_exceptions.dart';
 import 'package:twitter_clone/features/home/features/creating_tweet/data/models/tweetmodel.dart';
 
@@ -12,12 +11,12 @@ abstract interface class CreateTweetRemoteDataSource {
 
 class CreateTweetRemoteDataSourceImpl implements CreateTweetRemoteDataSource {
   final FirebaseFirestore _firebaseFirestore;
-  final FirebaseStorage _firebaseStorage;
+  final FirebaseStorageDataSource _firebaseStorageDataSource;
   CreateTweetRemoteDataSourceImpl({
+    required FirebaseStorageDataSource firebaseStorageDataSource,
     required FirebaseFirestore firebaseFirestore,
-    required FirebaseStorage firebaseStorage,
   })  : _firebaseFirestore = firebaseFirestore,
-        _firebaseStorage = firebaseStorage;
+        _firebaseStorageDataSource = firebaseStorageDataSource;
 
   @override
   Future<void> shareTweet({required Tweetmodel tweetModel}) async {
@@ -25,7 +24,8 @@ class CreateTweetRemoteDataSourceImpl implements CreateTweetRemoteDataSource {
       log('and here i am in remote data source');
       List<String> imageUrls = [];
       if (tweetModel.imageList.isNotEmpty) {
-        imageUrls = await _storeImagesInFirebaseStorage(tweetModel);
+        imageUrls = await _firebaseStorageDataSource.uploadListOfImages(
+            tweetModel.imageList, tweetModel.tweetId);
       }
 
       final Tweetmodel tweet = tweetModel.copyWith(imageList: imageUrls);
@@ -39,27 +39,6 @@ class CreateTweetRemoteDataSourceImpl implements CreateTweetRemoteDataSource {
     } on FirebaseException catch (e) {
       throw ServerException(
           message: e.toString(), stackTrace: StackTrace.current);
-    } catch (e) {
-      throw ServerException(
-          message: e.toString(), stackTrace: StackTrace.current);
-    }
-  }
-
-  Future<List<String>> _storeImagesInFirebaseStorage(
-      Tweetmodel tweetModel) async {
-    try {
-      return await Future.wait(tweetModel.imageList.map((image) async {
-        if (!(await File(image).exists())) {
-          throw ServerException(
-              message: 'Invalid or non-existent image file: $image',
-              stackTrace: StackTrace.current);
-        }
-        String fileName = DateTime.now().microsecondsSinceEpoch.toString();
-        Reference ref = _firebaseStorage.ref('${tweetModel.tweetId}/$fileName');
-        UploadTask uploadTask = ref.putFile(File(image));
-        TaskSnapshot snapshot = await uploadTask;
-        return await snapshot.ref.getDownloadURL();
-      }));
     } catch (e) {
       throw ServerException(
           message: e.toString(), stackTrace: StackTrace.current);
