@@ -16,10 +16,4 @@ class UiConstants {
       centerTitle: true,
     );
   }
-
-  static List<Widget> bottomTapBarScreens = [
-    const Text('Feed Screen'),
-    const Text('Search Screen'),
-    const Text('Notfication Screen'),
-  ];
 }

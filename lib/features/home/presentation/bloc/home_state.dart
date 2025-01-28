@@ -26,6 +26,8 @@ final class HomeFetchAllTweetsSuccess extends HomeState {
   });
 }
 
+final class HomeFetchAllTweetsLoading extends HomeState {}
+
 final class HomeFetchAllTweetsFailure extends HomeState {
   final String message;
   HomeFetchAllTweetsFailure({required this.message});

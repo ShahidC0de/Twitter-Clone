@@ -33,7 +33,7 @@ class CreateTweetRemoteDataSourceImpl implements CreateTweetRemoteDataSource {
       await _firebaseFirestore
           .collection(FirebaseConstants.usersTweetsCollection)
           .doc(tweet.userId)
-          .collection(tweet.userId)
+          .collection('tweets')
           .doc(tweet.tweetId)
           .set(tweet.toMap());
       return;

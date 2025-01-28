@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:twitter_clone/core/enums/tweet_type_enum.dart';
 import 'package:twitter_clone/features/home/domain/entities/tweet.dart';
 
@@ -16,42 +18,42 @@ class Tweetmodel extends Tweet {
       required super.reshareCount});
   // to map function
   Map<String, dynamic> toMap() {
-    final result = <String, dynamic>{};
-    result.addAll({'text': text});
-    result.addAll({'hashtags': hashtags as List});
-    result.addAll({'link': link});
-    result.addAll({'imageList': imageList as List});
-    result.addAll({'userId': userId});
-    result.addAll({'tweetType': tweetType.type});
-    result.addAll({'tweetAt': tweetedAt.millisecondsSinceEpoch});
-    result.addAll({'likes': likes});
-    result.addAll({'commentIds': commentIds as List});
-    result.addAll({'reshareCount': reshareCount});
-    result.addAll({'tweetId': tweetId});
-    return result;
+    return {
+      'text': text,
+      'hashtags': hashtags,
+      'link': link,
+      'imageList': imageList,
+      'userId': userId,
+      'tweetType': tweetType.type,
+      'tweetedAt': tweetedAt.millisecondsSinceEpoch,
+      'likes': likes,
+      'commentIds': commentIds,
+      'reshareCount': reshareCount,
+      'tweetId': tweetId,
+    };
   }
 
   // from Map
   factory Tweetmodel.fromMap(Map<String, dynamic> map) {
+    log("Raw data from Firestore: $map"); // Log the map
     return Tweetmodel(
       text: map['text'] ?? '',
-      hashtags: List<String>.from(map['hashtags'] ?? []),
+      hashtags: List<String>.from(map['hashtags'] as List? ?? []),
       link: map['link'] ?? '',
-      imageList:
-          List<String>.from(map['imageList'] ?? []), // Fixed imageList issue
-      userId: map['userId'] ?? '', // Null check for userId
-      tweetType: (map['tweetType'] as String?)?.toTweetTypeEnum() ??
-          TweetType.text, // Handle invalid enum values
+      imageList: List<String>.from(map['imageList'] as List? ?? []),
+      userId: map['userId'] ?? '',
+      tweetType:
+          (map['tweetType'] as String?)?.toTweetTypeEnum() ?? TweetType.text,
       tweetedAt: map['tweetedAt'] != null
-          ? DateTime.fromMillisecondsSinceEpoch(map['tweetedAt'])
-          : DateTime.now(), // Handle null tweetedAt
-      likes: List<String>.from(map['likes'] ?? []),
-      commentIds: List<String>.from(map['commentIds'] ?? []),
-      tweetId: map['tweetId'] ?? '', // Null check for tweetId
-      reshareCount:
-          map['reshareCount'] as int? ?? 0, // Ensure reshareCount is non-null
+          ? DateTime.fromMillisecondsSinceEpoch(map['tweetedAt'] as int)
+          : DateTime.now(),
+      likes: List<String>.from(map['likes'] as List? ?? []),
+      commentIds: List<String>.from(map['commentIds'] as List? ?? []),
+      tweetId: map['tweetId'] as String? ?? '',
+      reshareCount: map['reshareCount'] as int? ?? 0,
     );
   }
+
   Tweetmodel copyWith({
     String? text,
     List<String>? hashtags,

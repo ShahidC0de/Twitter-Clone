@@ -79,15 +79,28 @@ class HomeRemoteDataSourceImpl implements HomeRemoteDataSource {
   @override
   Future<List<Tweetmodel>> getAllTweets() async {
     try {
-      QuerySnapshot querySnapshot = await _firebaseFirestore
-          .collectionGroup(FirebaseConstants.usersTweetsCollection)
+      QuerySnapshot querySnapshot =
+          await _firebaseFirestore.collectionGroup('tweets').get();
+
+      log("this is the new query data and documents are${querySnapshot.docs.length.toString()}");
+      // Use a collection group query to fetch all tweets from all users
+      QuerySnapshot tweetsSnapshot = await _firebaseFirestore
+          .collectionGroup(
+              'tweets') // Use a common sub-collection name for all users
           .get();
-      if (querySnapshot.docs.isNotEmpty) {
-        log('querysnapshot is not empty');
+
+      // Map tweets to TweetModel and add to the list
+      List<Tweetmodel> allTweets = tweetsSnapshot.docs
+          .map(
+            (doc) => Tweetmodel.fromMap(doc.data() as Map<String, dynamic>),
+          )
+          .toList();
+
+      // Log tweets for debugging
+      for (var i = 0; i < allTweets.length; i++) {
+        log('Tweet ${i + 1}: ${allTweets[i].toMap()}');
       }
-      List<Tweetmodel> allTweets = querySnapshot.docs.map((tweet) {
-        return Tweetmodel.fromMap(tweet.data() as Map<String, dynamic>);
-      }).toList();
+
       return allTweets;
     } on FirebaseException catch (e) {
       throw ServerException(

@@ -13,6 +13,7 @@ import 'package:twitter_clone/core/cubits/current_user_data/current_user_data_cu
 import 'package:twitter_clone/core/theme/pallete.dart';
 import 'package:twitter_clone/features/home/features/creating_tweet/presentation/pages/create_tweet.dart';
 import 'package:twitter_clone/features/home/presentation/bloc/home_bloc.dart';
+import 'package:twitter_clone/features/home/presentation/widgets/home_widgets.dart';
 
 class Home extends StatefulWidget {
   static route() => MaterialPageRoute(builder: (context) => const Home());
@@ -76,7 +77,7 @@ class _HomeState extends State<Home> {
         },
         child: IndexedStack(
           index: _page,
-          children: UiConstants.bottomTapBarScreens,
+          children: HomeUIConstants.bottomTapBarScreens,
         ),
       ),
 

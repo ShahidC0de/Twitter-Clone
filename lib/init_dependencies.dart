@@ -105,7 +105,7 @@ void _initHome() {
       () => FetchCurrentUserDataUsecase(homeRepository: serviceLocator()));
   serviceLocator.registerFactory(
       () => FetchAllTweetsUsecase(homeRepository: serviceLocator()));
-  serviceLocator.registerLazySingleton(() => HomeBloc(
+  serviceLocator.registerFactory(() => HomeBloc(
       fetchAllTweetsUseCase: serviceLocator(),
       fetchCurrentUserDataUsecase: serviceLocator(),
       currentuserDataCubit: serviceLocator()));
