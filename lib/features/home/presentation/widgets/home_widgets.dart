@@ -22,7 +22,7 @@ class TweetList extends StatefulWidget {
 class _TweetListState extends State<TweetList> {
   @override
   void initState() {
-    context.read<HomeBloc>().add(HomeFetchAllTweetsEvent());
+    context.read<HomeBloc>().add(FetchAllTweets());
     super.initState();
   }
 
@@ -30,14 +30,14 @@ class _TweetListState extends State<TweetList> {
   Widget build(BuildContext context) {
     return BlocConsumer<HomeBloc, HomeState>(
       listener: (context, state) {
-        if (state is HomeFetchAllTweetsFailure) {
+        if (state is HomeFailure) {
           showSnackBar(context, state.message);
         }
       },
       builder: (context, state) {
-        if (state is HomeFetchAllTweetsLoading) {
+        if (state is FetchingTweetsLoading) {
           return const Loader();
-        } else if (state is HomeFetchAllTweetsSuccess) {
+        } else if (state is FetchingTweetsSuccess) {
           final tweets = state.tweets;
 
           return ListView.builder(

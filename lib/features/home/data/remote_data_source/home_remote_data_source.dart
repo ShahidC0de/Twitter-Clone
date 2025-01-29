@@ -6,57 +6,26 @@ import 'package:twitter_clone/core/constants/constants.dart';
 import 'package:twitter_clone/core/exceptions/auth_exceptions.dart';
 import 'package:twitter_clone/features/home/data/models/tweetmodel.dart';
 import 'package:twitter_clone/features/home/data/models/user_model.dart';
+import 'package:twitter_clone/features/home/data/remote_data_source/storage_remote_data_source.dart';
 
 abstract interface class HomeRemoteDataSource {
-  Future<UserModel> getCurrentUserData(String currentUserId);
   Future<void> storeCurrentUserdata(UserModel usermodel);
   String get getUserId;
   Future<List<Tweetmodel>> getAllTweets();
+  Future<Tweetmodel> shareTweet(Tweetmodel tweet);
 }
 
 class HomeRemoteDataSourceImpl implements HomeRemoteDataSource {
   final FirebaseAuth _firebaseAuth;
   final FirebaseFirestore _firebaseFirestore;
+  final StorageRemoteDataSource _storageRemoteDataSource;
   HomeRemoteDataSourceImpl({
+    required StorageRemoteDataSource storageRemoteDataSource,
     required FirebaseFirestore firebaseFirestore,
     required FirebaseAuth firebaseAuth,
   })  : _firebaseFirestore = firebaseFirestore,
-        _firebaseAuth = firebaseAuth;
-// GETTING CURRENT USER DATA WITH ALL ATTRIBUTES;
-  @override
-  Future<UserModel> getCurrentUserData(String currentUserId) async {
-    try {
-      final DocumentSnapshot documentSnapshot = await _firebaseFirestore
-          .collection(FirebaseConstants.userCollection)
-          .doc(currentUserId)
-          .get();
-      if (documentSnapshot.exists) {
-        final rawData = documentSnapshot.data() as Map<String, dynamic>;
-        final UserModel userModel = UserModel(
-            uid: rawData['uid'],
-            name: rawData['name'],
-            email: rawData['email'],
-            followers: rawData['followers'],
-            following: rawData['following'],
-            profilePic: rawData['profilePic'],
-            bannerPic: rawData['bannerPic'],
-            bio: rawData['bio'],
-            isTwitterBlue: rawData['isTwitterBlue']);
-
-        return userModel;
-      } else {
-        throw ServerException(
-            message: 'DocumentSnapshot does not exist',
-            stackTrace: StackTrace.current);
-      }
-    } on FirebaseException catch (e) {
-      throw ServerException(
-          message: e.toString(), stackTrace: StackTrace.current);
-    } catch (e) {
-      throw ServerException(
-          message: e.toString(), stackTrace: StackTrace.current);
-    }
-  }
+        _firebaseAuth = firebaseAuth,
+        _storageRemoteDataSource = storageRemoteDataSource;
 
 // STORING CURRENT USER DATA WITH ALL ATTTRIBUTES
   @override
@@ -102,6 +71,33 @@ class HomeRemoteDataSourceImpl implements HomeRemoteDataSource {
       }
 
       return allTweets;
+    } on FirebaseException catch (e) {
+      throw ServerException(
+          message: e.toString(), stackTrace: StackTrace.current);
+    } catch (e) {
+      throw ServerException(
+          message: e.toString(), stackTrace: StackTrace.current);
+    }
+  }
+
+  @override
+  Future<Tweetmodel> shareTweet(Tweetmodel tweetModel) async {
+    try {
+      log('and here i am in remote data source');
+      List<String> imageUrls = [];
+      if (tweetModel.imageList.isNotEmpty) {
+        imageUrls = await _storageRemoteDataSource.storeListOfImages(
+            tweetModel.imageList, tweetModel.tweetId);
+      }
+
+      final Tweetmodel tweet = tweetModel.copyWith(imageList: imageUrls);
+      await _firebaseFirestore
+          .collection(FirebaseConstants.usersTweetsCollection)
+          .doc(tweet.userId)
+          .collection('tweets')
+          .doc(tweet.tweetId)
+          .set(tweet.toMap());
+      return tweet;
     } on FirebaseException catch (e) {
       throw ServerException(
           message: e.toString(), stackTrace: StackTrace.current);

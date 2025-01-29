@@ -9,10 +9,8 @@ import 'package:flutter_svg/svg.dart';
 import 'package:twitter_clone/core/constants/assets_constants.dart';
 import 'package:twitter_clone/core/constants/ui_constants.dart';
 import 'package:twitter_clone/core/cubits/app_user/app_user_cubit.dart';
-import 'package:twitter_clone/core/cubits/current_user_data/current_user_data_cubit.dart';
 import 'package:twitter_clone/core/theme/pallete.dart';
-import 'package:twitter_clone/features/home/features/creating_tweet/presentation/pages/create_tweet.dart';
-import 'package:twitter_clone/features/home/presentation/bloc/home_bloc.dart';
+import 'package:twitter_clone/features/home/presentation/screens/create_tweet.dart';
 import 'package:twitter_clone/features/home/presentation/widgets/home_widgets.dart';
 
 class Home extends StatefulWidget {
@@ -67,10 +65,10 @@ class _HomeState extends State<Home> {
               color: Pallete.whiteColor,
             )),
           ]),
-      body: BlocListener<CurrentUserDataCubit, CurrentUserDataState>(
+      body: BlocListener<AppUserCubit, AppUserState>(
         listener: (context, state) {
-          if (state is CurrentUserDataLoaded) {
-            log(state.userData.uid);
+          if (state is AppUserLoggedIn) {
+            log(state.user.uid);
           } else {
             log('state is not the desired one');
           }
@@ -83,13 +81,7 @@ class _HomeState extends State<Home> {
 
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          final blocProvider = BlocProvider.of<AppUserCubit>(context);
-          final providerState = blocProvider.state;
-          if (providerState is AppUserLoggedIn) {
-            context.read<HomeBloc>().add(
-                HomeFetchCurrentUserDataEvent(userId: providerState.user.id));
-            Navigator.push(context, CreateTweetPage.route());
-          }
+          Navigator.push(context, CreateTweetPage.route());
         },
         child: const Icon(Icons.add),
       ), // a widget that maintain its state,

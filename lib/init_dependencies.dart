@@ -19,6 +19,13 @@ Future<void> initDependencies() async {
     } else {
       await Firebase.initializeApp();
     }
+    FirebaseAuth firebaseAuth = FirebaseAuth.instance;
+    serviceLocator.registerLazySingleton(() => firebaseAuth);
+    FirebaseFirestore firestore = FirebaseFirestore.instance;
+    serviceLocator.registerLazySingleton(() => firestore);
+    FirebaseStorage firebaseStorage = FirebaseStorage.instance;
+    serviceLocator
+        .registerLazySingleton<FirebaseStorage>(() => firebaseStorage);
     serviceLocator.registerLazySingleton(() => AppUserCubit());
 
     _initAuth();
@@ -43,22 +50,12 @@ Future<Database> _getDb() async {
 
 Future<Database> _openDb() async {
   try {
-    final tableName = LocalStorageConstants.currentUserDataTableInSQL;
-    const idColumn = 'uid';
-    const nameColumn = 'name';
-    const emailColumn = 'email';
-    const followersColumn = 'followers';
-    const followingColumn = 'following';
-    const profilePicColumn = 'profilePic';
-    const bannerPicColumn = 'bannerPic';
-    const bioColumn = 'bio';
-    const isTwitterBlueColumn = 'isTwitterBlue';
     Directory directory = await getApplicationDocumentsDirectory();
     String directoryPath = join(directory.path, 'mydb.db');
     return await openDatabase(directoryPath, version: 1,
         onCreate: (db, version) {
       db.execute(
-          'create table $tableName($idColumn TEXT PRIMARY KEY , $nameColumn TEXT, $emailColumn TEXT, $followersColumn TEXT, $followingColumn TEXT, $profilePicColumn TEXT, $bannerPicColumn TEXT, $bioColumn TEXT, $isTwitterBlueColumn INTEGER)');
+          'create table ${LocalStorageConstants.currentUserDataTableInSQL}(${LocalStorageConstants.idColumn} TEXT PRIMARY KEY , ${LocalStorageConstants.nameColumn} TEXT, ${LocalStorageConstants.emailColumn} TEXT, ${LocalStorageConstants.followersColumn} TEXT, ${LocalStorageConstants.followersColumn} TEXT, ${LocalStorageConstants.profilePicColumn} TEXT, ${LocalStorageConstants.bannerPicColumn} TEXT, ${LocalStorageConstants.bioColumn} TEXT, ${LocalStorageConstants.isTwitterBlueColumn} INTEGER)');
     });
   } catch (e) {
     throw Exception(e.toString());
@@ -66,10 +63,9 @@ Future<Database> _openDb() async {
 }
 
 void _initAuth() {
-  FirebaseAuth firebaseAuth = FirebaseAuth.instance;
-  serviceLocator.registerLazySingleton(() => firebaseAuth);
-  serviceLocator.registerFactory<AuthRemoteDataSource>(
-      () => AuthRemoteDataSourceImpl(firebaseAuth: serviceLocator()));
+  serviceLocator.registerFactory<AuthRemoteDataSource>(() =>
+      AuthRemoteDataSourceImpl(
+          firebaseAuth: serviceLocator(), firebaseFirestore: serviceLocator()));
   serviceLocator.registerFactory<AuthRepository>(
       () => RepostoryImpl(authRemoteDataSource: serviceLocator()));
   serviceLocator
@@ -87,46 +83,27 @@ void _initAuth() {
 }
 
 void _initHome() {
-  FirebaseFirestore firestore = FirebaseFirestore.instance;
-  serviceLocator.registerLazySingleton(() => firestore);
-  serviceLocator.registerLazySingleton<CurrentUserDataCubit>(
-      () => CurrentUserDataCubit());
   serviceLocator.registerFactory<HomeLocalDataSource>(
       () => HomeLocalDataSourceImpl(database: serviceLocator()));
+  serviceLocator.registerFactory<StorageRemoteDataSource>(
+      () => StorageRemoteDataSourceImpl(firebaseStorage: serviceLocator()));
   serviceLocator
       .registerFactory<HomeRemoteDataSource>(() => HomeRemoteDataSourceImpl(
             firebaseFirestore: serviceLocator(),
             firebaseAuth: serviceLocator(),
+            storageRemoteDataSource: serviceLocator(),
           ));
   serviceLocator.registerFactory<HomeRepository>(() => HomeRepositoryImpl(
       homeRemoteDataSource: serviceLocator(),
       homeLocalDataSource: serviceLocator()));
-  serviceLocator.registerFactory(
-      () => FetchCurrentUserDataUsecase(homeRepository: serviceLocator()));
+  serviceLocator.registerFactory(() => TweetParser());
+
   serviceLocator.registerFactory(
       () => FetchAllTweetsUsecase(homeRepository: serviceLocator()));
-  serviceLocator.registerFactory(() => HomeBloc(
-      fetchAllTweetsUseCase: serviceLocator(),
-      fetchCurrentUserDataUsecase: serviceLocator(),
-      currentuserDataCubit: serviceLocator()));
-  _initCreateTweet();
-}
-
-void _initCreateTweet() {
-  FirebaseStorage firebaseStorage = FirebaseStorage.instance;
-  serviceLocator.registerLazySingleton<FirebaseStorage>(() => firebaseStorage);
-  serviceLocator.registerFactory<FirebaseStorageDataSource>(
-      () => FirebaseStorageDataSourceImpl(firebaseStorage: serviceLocator()));
-  serviceLocator.registerFactory<CreateTweetRemoteDataSource>(
-      () => CreateTweetRemoteDataSourceImpl(
-            firebaseFirestore: serviceLocator(),
-            firebaseStorageDataSource: serviceLocator(),
-          ));
-  serviceLocator.registerFactory<CreateTweetRepository>(() =>
-      CreateTweetRepositoryImpl(createTweetRemoteDataSource: serviceLocator()));
-  serviceLocator.registerFactory(() => TweetParser());
   serviceLocator.registerFactory(() => CreateTweetUsecase(
-      createTweetRepository: serviceLocator(), tweetParser: serviceLocator()));
-  serviceLocator.registerLazySingleton(
-      () => CreateTweetBloc(createTweetUsecase: serviceLocator()));
+      homeRepository: serviceLocator(), tweetParser: serviceLocator()));
+  serviceLocator.registerFactory(() => HomeBloc(
+        fetchAllTweetsUseCase: serviceLocator(),
+        createTweetUseCase: serviceLocator(),
+      ));
 }

@@ -1,5 +1,3 @@
-import 'package:twitter_clone/core/entities/auth_user_entity.dart';
-
 class AuthUserModel extends AuthUserEntity {
   AuthUserModel({required super.id, required super.email});
 
@@ -15,4 +13,13 @@ class AuthUserModel extends AuthUserEntity {
     return AuthUserModel(id: id ?? this.id, email: email ?? this.email);
   }
   // toJson method
+}
+
+class AuthUserEntity {
+  final String id;
+  final String email;
+  AuthUserEntity({
+    required this.id,
+    required this.email,
+  });
 }

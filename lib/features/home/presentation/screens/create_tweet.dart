@@ -8,11 +8,11 @@ import 'package:flutter_svg/svg.dart';
 import 'package:twitter_clone/core/common/loader.dart';
 import 'package:twitter_clone/core/common/rounded_small_button.dart';
 import 'package:twitter_clone/core/constants/assets_constants.dart';
-import 'package:twitter_clone/core/cubits/current_user_data/current_user_data_cubit.dart';
+import 'package:twitter_clone/core/cubits/app_user/app_user_cubit.dart';
+import 'package:twitter_clone/core/entities/user_entity.dart';
 import 'package:twitter_clone/core/theme/pallete.dart';
-import 'package:twitter_clone/core/entities/user_presentation_model.dart';
 import 'package:twitter_clone/core/utils/utilities.dart';
-import 'package:twitter_clone/features/home/features/creating_tweet/presentation/bloc/create_tweet_bloc.dart';
+import 'package:twitter_clone/features/home/presentation/bloc/home_bloc.dart';
 import 'package:twitter_clone/features/home/presentation/screens/home.dart';
 
 class CreateTweetPage extends StatefulWidget {
@@ -25,10 +25,19 @@ class CreateTweetPage extends StatefulWidget {
 }
 
 class _CreateTweetPageState extends State<CreateTweetPage> {
+  late UserEntity userData = UserEntity(
+      uid: 'uid',
+      name: 'name',
+      email: 'email',
+      followers: [],
+      following: [],
+      profilePic: 'profilePic',
+      bannerPic: 'bannerPic',
+      bio: 'bio',
+      isTwitterBlue: false);
   List<File> pickedImages = [];
   final TextEditingController tweetController = TextEditingController();
 
-  UserPresentationModel? userData;
   void onPickImages() async {
     pickedImages = await pickImages();
     setState(() {});
@@ -42,6 +51,12 @@ class _CreateTweetPageState extends State<CreateTweetPage> {
 
   @override
   void initState() {
+    final blocProvider = BlocProvider.of<AppUserCubit>(context);
+    final state = blocProvider.state;
+    if (state is AppUserLoggedIn) {
+      userData = state.user;
+    }
+
     super.initState();
   }
 
@@ -53,8 +68,8 @@ class _CreateTweetPageState extends State<CreateTweetPage> {
           RoundedSmallButton(
             onTap: () {
               if (tweetController.text.isNotEmpty || pickedImages.isNotEmpty) {
-                context.read<CreateTweetBloc>().add(CreateUserTweetEvent(
-                      userId: userData!.uid,
+                context.read<HomeBloc>().add(ShareTweet(
+                      userId: userData.uid,
                       tweetText: tweetController.text,
                       tweetImages:
                           pickedImages.map((image) => image.path).toList(),
@@ -82,83 +97,73 @@ class _CreateTweetPageState extends State<CreateTweetPage> {
               size: 30,
             )),
       ),
-      body: BlocConsumer<CreateTweetBloc, CreateTweetState>(
+      body: BlocConsumer<HomeBloc, HomeState>(
         listener: (context, state) {
-          if (state is CreateTweetFailure) {
+          if (state is HomeFailure) {
             showSnackBar(context, 'something bad happend');
-          } else if (state is CreateTweetSuccess) {
+          } else if (state is ShareTweetSucceed) {
             Navigator.pushAndRemoveUntil(
                 context, Home.route(), (route) => false);
           }
         },
         builder: (context, state) {
-          if (state is CreatingTweetLoading) {
+          if (state is ShareTweetLoading) {
             return const Loader();
           }
-          return BlocListener<CurrentUserDataCubit, CurrentUserDataState>(
-            listener: (context, state) {
-              if (state is CurrentUserDataLoaded) {
-                setState(() {
-                  userData = state.userData;
-                });
-              }
-            },
-            child: SafeArea(
-                child: SingleChildScrollView(
-              child: Column(
-                children: [
-                  Row(
-                    children: [
-                      CircleAvatar(
-                        backgroundImage:
-                            userData != null && userData!.profilePic.isNotEmpty
-                                ? NetworkImage(userData!.profilePic)
-                                : null,
-                        radius: 30,
-                        child: userData == null || userData!.profilePic.isEmpty
-                            ? const Icon(Icons.person, size: 40)
-                            : null,
-                      ),
-                      const SizedBox(
-                        width: 15,
-                      ),
-                      Expanded(
-                        child: TextField(
-                          controller: tweetController,
-                          maxLines: null,
-                          style: const TextStyle(
-                            fontSize: 22,
-                          ),
-                          decoration: const InputDecoration(
-                            hintText: "What's happening?",
-                            hintStyle: TextStyle(
-                              color: Pallete.greyColor,
-                              fontSize: 22,
-                              fontWeight: FontWeight.w600,
-                            ),
-                            border: InputBorder.none,
-                          ),
+          return SafeArea(
+              child: SingleChildScrollView(
+            child: Column(
+              children: [
+                Row(
+                  children: [
+                    CircleAvatar(
+                      backgroundImage: userData.profilePic.isNotEmpty
+                          ? NetworkImage(userData.profilePic)
+                          : null,
+                      radius: 30,
+                      child: userData.profilePic.isEmpty
+                          ? const Icon(Icons.person, size: 40)
+                          : null,
+                    ),
+                    const SizedBox(
+                      width: 15,
+                    ),
+                    Expanded(
+                      child: TextField(
+                        controller: tweetController,
+                        maxLines: null,
+                        style: const TextStyle(
+                          fontSize: 22,
                         ),
-                      )
-                    ],
-                  ),
-                  CarouselSlider(
-                      items: pickedImages
-                          .map((image) => Container(
-                              width: MediaQuery.of(context).size.width,
-                              margin: const EdgeInsets.symmetric(
-                                horizontal: 5,
-                              ),
-                              child: Image.file(image)))
-                          .toList(),
-                      options: CarouselOptions(
-                        height: 400,
-                        enableInfiniteScroll: false,
-                      ))
-                ],
-              ),
-            )),
-          );
+                        decoration: const InputDecoration(
+                          hintText: "What's happening?",
+                          hintStyle: TextStyle(
+                            color: Pallete.greyColor,
+                            fontSize: 22,
+                            fontWeight: FontWeight.w600,
+                          ),
+                          border: InputBorder.none,
+                        ),
+                      ),
+                    )
+                  ],
+                ),
+                CarouselSlider(
+                    items: pickedImages
+                        .map((image) => Container(
+                            width: MediaQuery.of(context).size.width,
+                            margin: const EdgeInsets.symmetric(
+                              horizontal: 5,
+                            ),
+                            child: Image.file(image)))
+                        .toList(),
+                    options: CarouselOptions(
+                      height: 400,
+                      enableInfiniteScroll: false,
+                    ))
+              ],
+            ),
+          ));
         },
       ),
       bottomNavigationBar: Container(

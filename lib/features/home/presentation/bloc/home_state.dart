@@ -5,30 +5,22 @@ sealed class HomeState {}
 
 final class HomeInitial extends HomeState {}
 
-final class HomeCurrentUserDataFetching extends HomeState {}
-
-final class HomeCurrentUserDataFetchingFailed extends HomeState {
-  final String message;
-  HomeCurrentUserDataFetchingFailed({required this.message});
-}
-
-final class HomeCurrentUserDataFetched extends HomeState {
-  final UserPresentationModel userData;
-  HomeCurrentUserDataFetched({
-    required this.userData,
-  });
-}
-
-final class HomeFetchAllTweetsSuccess extends HomeState {
+// FETCHING TWEETS STATES;
+final class FetchingTweetsSuccess extends HomeState {
   final List<Tweet> tweets;
-  HomeFetchAllTweetsSuccess({
+  FetchingTweetsSuccess({
     required this.tweets,
   });
 }
 
-final class HomeFetchAllTweetsLoading extends HomeState {}
+final class FetchingTweetsLoading extends HomeState {}
 
-final class HomeFetchAllTweetsFailure extends HomeState {
+final class HomeFailure extends HomeState {
   final String message;
-  HomeFetchAllTweetsFailure({required this.message});
+  HomeFailure({required this.message});
 }
+
+// CREATING TWEET STATES;
+final class ShareTweetLoading extends HomeState {}
+
+final class ShareTweetSucceed extends HomeState {}

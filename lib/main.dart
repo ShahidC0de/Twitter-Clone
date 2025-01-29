@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:twitter_clone/core/cubits/app_user/app_user_cubit.dart';
-import 'package:twitter_clone/core/cubits/current_user_data/current_user_data_cubit.dart';
 import 'package:twitter_clone/core/theme/app_theme.dart';
 import 'package:twitter_clone/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:twitter_clone/features/auth/presentation/screens/login.dart';
-import 'package:twitter_clone/features/home/features/creating_tweet/presentation/bloc/create_tweet_bloc.dart';
 import 'package:twitter_clone/features/home/presentation/bloc/home_bloc.dart';
 import 'package:twitter_clone/features/home/presentation/screens/home.dart';
 import 'package:twitter_clone/init_dependencies_part.dart';
@@ -19,16 +17,10 @@ void main() async {
       create: (_) => serviceLocator<AppUserCubit>(),
     ),
     BlocProvider(
-      create: (_) => serviceLocator<CurrentUserDataCubit>(),
-    ),
-    BlocProvider(
       create: (_) => serviceLocator<AuthBloc>(),
     ),
     BlocProvider(
       create: (_) => serviceLocator<HomeBloc>(),
-    ),
-    BlocProvider(
-      create: (_) => serviceLocator<CreateTweetBloc>(),
     ),
   ], child: const MyApp()));
 }

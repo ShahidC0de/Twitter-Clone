@@ -3,10 +3,9 @@ import 'package:fpdart/fpdart.dart';
 import 'package:twitter_clone/core/exceptions/auth_exceptions.dart';
 import 'package:twitter_clone/core/type_def/datatype.dart';
 import 'package:twitter_clone/core/type_def/failure.dart';
-import 'package:twitter_clone/features/auth/data/models/auth_user_model.dart';
 import 'package:twitter_clone/features/auth/data/remote_data_source/remote_data_source_impl.dart';
-import 'package:twitter_clone/core/entities/auth_user_entity.dart';
 import 'package:twitter_clone/features/auth/domain/repositories/auth_repository.dart';
+import 'package:twitter_clone/features/home/data/models/user_model.dart';
 
 class RepostoryImpl implements AuthRepository {
   final AuthRemoteDataSource _authRemoteDataSource;
@@ -14,24 +13,44 @@ class RepostoryImpl implements AuthRepository {
       : _authRemoteDataSource = authRemoteDataSource;
   @override
   @override
-  FutureEither<AuthUserEntity> signUp(
+  FutureEither<UserModel> signUp(
       {required String email, required String password}) async {
     try {
-      final AuthUserModel userModel =
+      final user =
           await _authRemoteDataSource.signUp(email: email, password: password);
-      return right(AuthUserEntity(id: userModel.id, email: userModel.email));
+      if (user.id.isNotEmpty) {
+        final UserModel usermodel = await _authRemoteDataSource
+            .storeCurrentUserDataInFirestore(UserModel(
+                uid: user.id,
+                name: "",
+                email: user.email,
+                followers: [],
+                following: [],
+                profilePic: "",
+                bannerPic: "",
+                bio: "",
+                isTwitterBlue: false));
+        return right(usermodel);
+      }
+      return left(
+          Failure('User cannot be created in firestore', StackTrace.current));
     } catch (e) {
       return left(Failure(e.toString(), StackTrace.current));
     }
   }
 
   @override
-  FutureEither<AuthUserEntity> signIn(
+  FutureEither<UserModel> signIn(
       {required String email, required String password}) async {
     try {
-      final AuthUserModel userModel =
+      final user =
           await _authRemoteDataSource.signIn(email: email, password: password);
-      return right(AuthUserEntity(id: userModel.id, email: userModel.email));
+      if (user.id.isNotEmpty) {
+        final UserModel userModel =
+            await _authRemoteDataSource.getCurrentUserDataInFirestore(user.id);
+        return right(userModel);
+      }
+      return left(Failure('some error has been occured ', StackTrace.current));
     } catch (e) {
       return left(
         Failure(e.toString(), StackTrace.current),
@@ -40,11 +59,13 @@ class RepostoryImpl implements AuthRepository {
   }
 
   @override
-  FutureEither<AuthUserEntity> getCurrentUser() async {
+  FutureEither<UserModel> getCurrentUser() async {
     try {
       final response = _authRemoteDataSource.currentUserSession;
       if (response != null) {
-        return right(AuthUserEntity(id: response.uid, email: response.email!));
+        final UserModel userModel = await _authRemoteDataSource
+            .getCurrentUserDataInFirestore(response.uid);
+        return right(userModel);
       } else {
         return left(Failure('User is null', StackTrace.current));
       }

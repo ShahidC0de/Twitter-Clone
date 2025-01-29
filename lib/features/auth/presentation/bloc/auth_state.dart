@@ -13,7 +13,7 @@ final class AuthFailure extends AuthState {
 }
 
 final class AuthSuccess extends AuthState {
-  final AuthUserEntity user;
+  final UserEntity user;
   AuthSuccess({required this.user});
 }
 
