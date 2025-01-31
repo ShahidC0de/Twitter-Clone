@@ -1,3 +1,5 @@
+// ignore_for_file: deprecated_member_use
+
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 
@@ -32,7 +34,6 @@ class _CrousalImageState extends State<CrousalImage> {
                         ))
                     .toList(),
                 options: CarouselOptions(
-                    height: 400,
                     enableInfiniteScroll: false,
                     viewportFraction: 1,
                     onPageChanged: (index, reason) {

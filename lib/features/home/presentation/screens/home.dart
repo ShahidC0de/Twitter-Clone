@@ -4,12 +4,10 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:twitter_clone/core/common/loader.dart';
 import 'package:twitter_clone/core/constants/assets_constants.dart';
 import 'package:twitter_clone/core/constants/ui_constants.dart';
 import 'package:twitter_clone/core/theme/pallete.dart';
 import 'package:twitter_clone/features/home/presentation/bloc/home_bloc.dart';
-import 'package:twitter_clone/features/home/presentation/bloc/home_state.dart';
 import 'package:twitter_clone/features/home/presentation/screens/create_tweet.dart';
 import 'package:twitter_clone/features/home/presentation/widgets/home_widgets.dart';
 
