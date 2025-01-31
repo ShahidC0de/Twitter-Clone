@@ -66,18 +66,9 @@ class _HomeState extends State<Home> {
               color: Pallete.whiteColor,
             )),
           ]),
-      body: BlocBuilder<HomeBloc, HomeState>(
-        builder: (context, state) {
-          if (state.isLoading != false) {
-            return const Center(
-              child: Loader(),
-            );
-          }
-          return IndexedStack(
-            index: _page,
-            children: HomeUIConstants.bottomTapBarScreens,
-          );
-        },
+      body: IndexedStack(
+        index: _page,
+        children: HomeUIConstants.bottomTapBarScreens,
       ),
 
       floatingActionButton: FloatingActionButton(

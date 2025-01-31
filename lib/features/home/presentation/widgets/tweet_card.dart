@@ -1,11 +1,14 @@
+import 'package:any_link_preview/any_link_preview.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:twitter_clone/core/common/loader.dart';
+import 'package:twitter_clone/core/enums/tweet_type_enum.dart';
 import 'package:twitter_clone/core/theme/pallete.dart';
 import 'package:twitter_clone/features/home/domain/entities/tweet.dart';
 import 'package:twitter_clone/features/home/presentation/bloc/home_bloc.dart';
 import 'package:twitter_clone/features/home/presentation/bloc/home_state.dart';
 import 'package:timeago/timeago.dart' as timeago;
+import 'package:twitter_clone/features/home/presentation/widgets/crousal_image.dart';
 import 'package:twitter_clone/features/home/presentation/widgets/hashtage_widget.dart';
 
 class TweetCard extends StatelessWidget {
@@ -26,6 +29,7 @@ class TweetCard extends StatelessWidget {
         return Column(
           children: [
             Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Container(
                   margin: const EdgeInsets.all(10),
@@ -65,6 +69,14 @@ class TweetCard extends StatelessWidget {
                       ),
                       // replied to
                       HashtageWidget(text: tweet.text),
+                      if (tweet.tweetType == TweetType.image)
+                        CrousalImage(imageLinks: tweet.imageList),
+                      if (tweet.link.isNotEmpty) ...[
+                        const SizedBox(),
+                        AnyLinkPreview(
+                            displayDirection: UIDirection.uiDirectionHorizontal,
+                            link: 'http://${tweet.link}'),
+                      ]
                     ],
                   ),
                 )
