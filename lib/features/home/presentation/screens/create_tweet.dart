@@ -13,6 +13,7 @@ import 'package:twitter_clone/core/entities/user_entity.dart';
 import 'package:twitter_clone/core/theme/pallete.dart';
 import 'package:twitter_clone/core/utils/utilities.dart';
 import 'package:twitter_clone/features/home/presentation/bloc/home_bloc.dart';
+import 'package:twitter_clone/features/home/presentation/bloc/home_state.dart';
 import 'package:twitter_clone/features/home/presentation/screens/home.dart';
 
 class CreateTweetPage extends StatefulWidget {
@@ -71,7 +72,7 @@ class _CreateTweetPageState extends State<CreateTweetPage> {
                 context.read<HomeBloc>().add(ShareTweet(
                       userId: userData.uid,
                       tweetText: tweetController.text,
-                      tweetImages:
+                      imagesList:
                           pickedImages.map((image) => image.path).toList(),
                     ));
               } else {
@@ -99,15 +100,20 @@ class _CreateTweetPageState extends State<CreateTweetPage> {
       ),
       body: BlocConsumer<HomeBloc, HomeState>(
         listener: (context, state) {
-          if (state is HomeFailure) {
-            showSnackBar(context, 'something bad happend');
-          } else if (state is ShareTweetSucceed) {
+          if (state.errorMessage != null) {
+            showSnackBar(context, state.errorMessage.toString());
+          } else if (state.tweets.isNotEmpty) {
+            // Successfully tweeted, navigate back
+            Navigator.pop(context); // Pop the current CreateTweetPage
             Navigator.pushAndRemoveUntil(
-                context, Home.route(), (route) => false);
+              context,
+              Home.route(), // Navigate to Home screen
+              (route) => false, // Remove all previous routes
+            );
           }
         },
         builder: (context, state) {
-          if (state is ShareTweetLoading) {
+          if (state.isLoading) {
             return const Loader();
           }
           return SafeArea(

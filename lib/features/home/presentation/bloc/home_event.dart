@@ -1,17 +1,22 @@
 part of 'home_bloc.dart';
 
 @immutable
-sealed class HomeEvent {}
+abstract class HomeEvent {}
 
-final class FetchAllTweets extends HomeEvent {}
+class FetchAllTweets extends HomeEvent {}
 
-final class ShareTweet extends HomeEvent {
+class ShareTweet extends HomeEvent {
   final String userId;
   final String tweetText;
-  final List<String> tweetImages;
+  final List<String> imagesList;
   ShareTweet({
     required this.userId,
     required this.tweetText,
-    required this.tweetImages,
+    required this.imagesList,
   });
+}
+
+class GetUser extends HomeEvent {
+  final String userId;
+  GetUser({required this.userId});
 }

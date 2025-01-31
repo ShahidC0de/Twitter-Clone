@@ -55,15 +55,15 @@ class UserModel extends UserEntity {
 
   factory UserModel.fromMap(Map<String, dynamic> map) {
     return UserModel(
-      uid: map['uid'],
-      name: map['name'],
-      email: map['email'],
-      followers: map['followers'],
-      following: map['following'],
-      profilePic: map['profilePic'],
-      bannerPic: map['bannerPic'],
-      bio: map['bio'],
-      isTwitterBlue: map['isTwitterBlue'],
+      uid: map['uid'] ?? '',
+      name: map['name'] ?? '',
+      email: map['email'] ?? '',
+      followers: map['followers'] ?? [],
+      following: map['following'] ?? [],
+      profilePic: map['profilePic'] ?? '',
+      bannerPic: map['bannerPic'] ?? '',
+      bio: map['bio'] ?? '',
+      isTwitterBlue: map['isTwitterBlue'] ?? false,
     );
   }
 }

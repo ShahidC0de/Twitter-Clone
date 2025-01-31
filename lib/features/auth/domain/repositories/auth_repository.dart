@@ -1,5 +1,5 @@
 import 'package:twitter_clone/core/type_def/datatype.dart';
-import 'package:twitter_clone/features/home/data/models/user_model.dart';
+import 'package:twitter_clone/core/models/user_model.dart';
 
 abstract interface class AuthRepository {
   FutureEither<UserModel> signUp({

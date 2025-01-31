@@ -1,18 +1,19 @@
+import 'dart:async';
 import 'dart:developer';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:twitter_clone/core/constants/constants.dart';
 import 'package:twitter_clone/core/exceptions/auth_exceptions.dart';
+import 'package:twitter_clone/core/models/user_model.dart';
 import 'package:twitter_clone/features/home/data/models/tweetmodel.dart';
-import 'package:twitter_clone/features/home/data/models/user_model.dart';
 import 'package:twitter_clone/features/home/data/remote_data_source/storage_remote_data_source.dart';
 
 abstract interface class HomeRemoteDataSource {
-  Future<void> storeCurrentUserdata(UserModel usermodel);
   String get getUserId;
   Future<List<Tweetmodel>> getAllTweets();
   Future<Tweetmodel> shareTweet(Tweetmodel tweet);
+  Future<UserModel> getUserData(String userId);
 }
 
 class HomeRemoteDataSourceImpl implements HomeRemoteDataSource {
@@ -26,20 +27,6 @@ class HomeRemoteDataSourceImpl implements HomeRemoteDataSource {
   })  : _firebaseFirestore = firebaseFirestore,
         _firebaseAuth = firebaseAuth,
         _storageRemoteDataSource = storageRemoteDataSource;
-
-// STORING CURRENT USER DATA WITH ALL ATTTRIBUTES
-  @override
-  Future<void> storeCurrentUserdata(UserModel usermodel) async {
-    try {
-      _firebaseFirestore
-          .collection(FirebaseConstants.userCollection)
-          .doc(getUserId)
-          .set(usermodel.toMap());
-    } catch (e) {
-      throw ServerException(
-          message: e.toString(), stackTrace: StackTrace.current);
-    }
-  }
 
 // GETTING CURRENT USER ID;
   @override
@@ -98,6 +85,27 @@ class HomeRemoteDataSourceImpl implements HomeRemoteDataSource {
           .doc(tweet.tweetId)
           .set(tweet.toMap());
       return tweet;
+    } on FirebaseException catch (e) {
+      throw ServerException(
+          message: e.toString(), stackTrace: StackTrace.current);
+    } catch (e) {
+      throw ServerException(
+          message: e.toString(), stackTrace: StackTrace.current);
+    }
+  }
+
+  @override
+  Future<UserModel> getUserData(String userId) async {
+    try {
+      log(userId.toString());
+      DocumentSnapshot documentSnapshot = await _firebaseFirestore
+          .collection('Users')
+          .doc('NyGnaafKlybWYLVKzVZU0LpCps92')
+          .get();
+      log(documentSnapshot.data().toString());
+      final rawData = documentSnapshot.data();
+
+      return UserModel.fromMap(rawData as Map<String, dynamic>);
     } on FirebaseException catch (e) {
       throw ServerException(
           message: e.toString(), stackTrace: StackTrace.current);

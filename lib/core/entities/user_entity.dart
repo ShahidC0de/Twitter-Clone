@@ -1,4 +1,4 @@
-import 'package:twitter_clone/features/home/data/models/user_model.dart';
+import 'package:twitter_clone/core/models/user_model.dart';
 
 class UserEntity {
   final String uid;

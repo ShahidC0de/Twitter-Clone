@@ -24,6 +24,7 @@ import 'package:twitter_clone/features/home/data/remote_data_source/storage_remo
 import 'package:twitter_clone/features/home/data/repository_impl/home_repository_impl.dart';
 import 'package:twitter_clone/features/home/domain/repositories/home_repository.dart';
 import 'package:twitter_clone/features/home/domain/usecases/fetch_all_tweets_usecase.dart';
+import 'package:twitter_clone/features/home/domain/usecases/get_user_data_usecase.dart';
 import 'package:twitter_clone/features/home/domain/usecases/tweet_parser.dart';
 import 'package:twitter_clone/features/home/domain/usecases/create_tweet_usecase.dart';
 import 'package:twitter_clone/features/home/presentation/bloc/home_bloc.dart';

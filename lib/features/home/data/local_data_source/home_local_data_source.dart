@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'package:sqflite/sqflite.dart';
 import 'package:twitter_clone/core/constants/constants.dart';
-import 'package:twitter_clone/features/home/data/models/user_model.dart';
+import 'package:twitter_clone/core/models/user_model.dart';
 
 abstract interface class HomeLocalDataSource {
   Future<bool> insertCurrentUserData(UserModel usermodel);

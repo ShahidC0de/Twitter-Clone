@@ -4,7 +4,7 @@ import 'package:twitter_clone/core/constants/constants.dart';
 import 'package:twitter_clone/core/type_def/datatype.dart';
 import 'package:twitter_clone/core/exceptions/auth_exceptions.dart';
 import 'package:twitter_clone/features/auth/data/models/auth_user_model.dart';
-import 'package:twitter_clone/features/home/data/models/user_model.dart';
+import 'package:twitter_clone/core/models/user_model.dart';
 
 // Want to sign up, want to get user account -> Account, from service class
 // Want to access user-related data  -> model.Account, from models class

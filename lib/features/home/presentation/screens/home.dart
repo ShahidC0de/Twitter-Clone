@@ -1,15 +1,15 @@
 // ignore_for_file: deprecated_member_use
 
-import 'dart:developer';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:twitter_clone/core/common/loader.dart';
 import 'package:twitter_clone/core/constants/assets_constants.dart';
 import 'package:twitter_clone/core/constants/ui_constants.dart';
-import 'package:twitter_clone/core/cubits/app_user/app_user_cubit.dart';
 import 'package:twitter_clone/core/theme/pallete.dart';
+import 'package:twitter_clone/features/home/presentation/bloc/home_bloc.dart';
+import 'package:twitter_clone/features/home/presentation/bloc/home_state.dart';
 import 'package:twitter_clone/features/home/presentation/screens/create_tweet.dart';
 import 'package:twitter_clone/features/home/presentation/widgets/home_widgets.dart';
 
@@ -33,6 +33,7 @@ class _HomeState extends State<Home> {
 
   @override
   void initState() {
+    context.read<HomeBloc>().add(FetchAllTweets());
     super.initState();
   }
 
@@ -65,18 +66,18 @@ class _HomeState extends State<Home> {
               color: Pallete.whiteColor,
             )),
           ]),
-      body: BlocListener<AppUserCubit, AppUserState>(
-        listener: (context, state) {
-          if (state is AppUserLoggedIn) {
-            log(state.user.uid);
-          } else {
-            log('state is not the desired one');
+      body: BlocBuilder<HomeBloc, HomeState>(
+        builder: (context, state) {
+          if (state.isLoading != false) {
+            return const Center(
+              child: Loader(),
+            );
           }
+          return IndexedStack(
+            index: _page,
+            children: HomeUIConstants.bottomTapBarScreens,
+          );
         },
-        child: IndexedStack(
-          index: _page,
-          children: HomeUIConstants.bottomTapBarScreens,
-        ),
       ),
 
       floatingActionButton: FloatingActionButton(

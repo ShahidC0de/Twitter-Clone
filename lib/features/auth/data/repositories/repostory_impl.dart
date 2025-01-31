@@ -5,7 +5,7 @@ import 'package:twitter_clone/core/type_def/datatype.dart';
 import 'package:twitter_clone/core/type_def/failure.dart';
 import 'package:twitter_clone/features/auth/data/remote_data_source/remote_data_source_impl.dart';
 import 'package:twitter_clone/features/auth/domain/repositories/auth_repository.dart';
-import 'package:twitter_clone/features/home/data/models/user_model.dart';
+import 'package:twitter_clone/core/models/user_model.dart';
 
 class RepostoryImpl implements AuthRepository {
   final AuthRemoteDataSource _authRemoteDataSource;
