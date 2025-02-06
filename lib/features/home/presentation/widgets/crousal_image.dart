@@ -42,6 +42,7 @@ class _CrousalImageState extends State<CrousalImage> {
                       });
                     })),
             Row(
+              mainAxisAlignment: MainAxisAlignment.center,
               children: widget.imageLinks.asMap().entries.map((e) {
                 return Container(
                   width: 8,

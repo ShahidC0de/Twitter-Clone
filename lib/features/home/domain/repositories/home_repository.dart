@@ -6,4 +6,5 @@ abstract interface class HomeRepository {
   FutureEither<List<Tweet>> getAllTweets();
   FutureEither shareTweet(Tweet tweet);
   FutureEither<UserEntity> getUserData(String userId);
+  FutureEitherVoid likeTweet(Tweet tweet, String currentUserId);
 }

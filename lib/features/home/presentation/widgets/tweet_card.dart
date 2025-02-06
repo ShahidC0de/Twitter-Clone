@@ -1,6 +1,8 @@
 import 'package:any_link_preview/any_link_preview.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:like_button/like_button.dart';
 import 'package:twitter_clone/core/common/loader.dart';
 import 'package:twitter_clone/core/constants/assets_constants.dart';
 import 'package:twitter_clone/core/enums/tweet_type_enum.dart';
@@ -99,10 +101,33 @@ class TweetCard extends StatelessWidget {
                                 pathName: AssetsConstants.retweetIcon,
                                 text: (tweet.reshareCount).toString(),
                                 onTap: () {}),
-                            TweetIconButton(
-                                pathName: AssetsConstants.likeOutlinedIcon,
-                                text: (tweet.likes.length).toString(),
-                                onTap: () {}),
+                            LikeButton(
+                              // ignore: body_might_complete_normally_nullable
+                              likeBuilder: (isLiked) {
+                                isLiked
+                                    ? SvgPicture.asset(
+                                        AssetsConstants.likeFilledIcon,
+                                        color: Pallete.redColor,
+                                      )
+                                    : SvgPicture.asset(
+                                        AssetsConstants.likeOutlinedIcon,
+                                        color: Pallete.greyColor,
+                                      );
+                              },
+                              likeCount: tweet.likes.length,
+                              countBuilder: (likeCount, isLiked, text) {
+                                return Padding(
+                                  padding: const EdgeInsets.only(left: 2.0),
+                                  child: Text(
+                                    text,
+                                    style: TextStyle(
+                                        color: isLiked
+                                            ? Pallete.redColor
+                                            : Pallete.whiteColor),
+                                  ),
+                                );
+                              },
+                            ),
                             IconButton(
                                 onPressed: () {},
                                 icon: const Icon(Icons.share_outlined))

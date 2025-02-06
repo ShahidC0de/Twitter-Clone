@@ -14,6 +14,7 @@ abstract interface class HomeRemoteDataSource {
   Future<List<Tweetmodel>> getAllTweets();
   Future<Tweetmodel> shareTweet(Tweetmodel tweet);
   Future<UserModel> getUserData(String userId);
+  Future<void> likeTweet(Tweetmodel tweet, String currentUserId);
 }
 
 class HomeRemoteDataSourceImpl implements HomeRemoteDataSource {
@@ -106,6 +107,32 @@ class HomeRemoteDataSourceImpl implements HomeRemoteDataSource {
       final rawData = documentSnapshot.data();
 
       return UserModel.fromMap(rawData as Map<String, dynamic>);
+    } on FirebaseException catch (e) {
+      throw ServerException(
+          message: e.toString(), stackTrace: StackTrace.current);
+    } catch (e) {
+      throw ServerException(
+          message: e.toString(), stackTrace: StackTrace.current);
+    }
+  }
+
+  @override
+  Future<void> likeTweet(Tweetmodel tweet, String currentUserId) async {
+    try {
+      List<String> likes = List.from(tweet.likes);
+      if (likes.contains(currentUserId)) {
+        likes.remove(currentUserId);
+      } else {
+        likes.add(currentUserId);
+      }
+      await _firebaseFirestore
+          .collection(FirebaseConstants.usersTweetsCollection)
+          .doc(tweet.userId)
+          .collection('tweets')
+          .doc(tweet.tweetId)
+          .update({
+        'likes': likes,
+      });
     } on FirebaseException catch (e) {
       throw ServerException(
           message: e.toString(), stackTrace: StackTrace.current);

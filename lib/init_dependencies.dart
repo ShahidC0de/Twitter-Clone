@@ -104,8 +104,11 @@ void _initHome() {
       homeRepository: serviceLocator(), tweetParser: serviceLocator()));
   serviceLocator.registerFactory(
       () => GetUserDataUsecase(homeRepository: serviceLocator()));
+  serviceLocator.registerFactory(
+      () => LikeTweetUsecase(homeRepository: serviceLocator()));
 
   serviceLocator.registerLazySingleton(() => HomeBloc(
+        likeTweetUsecase: serviceLocator(),
         fetchAllTweetsUsecase: serviceLocator(),
         getUserDataUsecase: serviceLocator(),
         createTweetUsecase: serviceLocator(),

@@ -46,4 +46,14 @@ class HomeRepositoryImpl implements HomeRepository {
       return left(Failure(e.toString(), StackTrace.current));
     }
   }
+
+  @override
+  FutureEitherVoid likeTweet(Tweet tweet, String currentUserId) async {
+    try {
+      return right(await _homeRemoteDataSource.likeTweet(
+          tweet.toTweetModel(), currentUserId));
+    } catch (e) {
+      return left(Failure(e.toString(), StackTrace.current));
+    }
+  }
 }

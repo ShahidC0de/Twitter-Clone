@@ -20,3 +20,12 @@ class GetUser extends HomeEvent {
   final String userId;
   GetUser({required this.userId});
 }
+
+class LikeTweet extends HomeEvent {
+  final Tweet tweet;
+  final String currentUserId;
+  LikeTweet({
+    required this.tweet,
+    required this.currentUserId,
+  });
+}
