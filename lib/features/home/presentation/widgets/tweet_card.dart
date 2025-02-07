@@ -5,6 +5,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:like_button/like_button.dart';
 import 'package:twitter_clone/core/common/loader.dart';
 import 'package:twitter_clone/core/constants/assets_constants.dart';
+import 'package:twitter_clone/core/cubits/app_user/app_user_cubit.dart';
 import 'package:twitter_clone/core/enums/tweet_type_enum.dart';
 import 'package:twitter_clone/core/theme/pallete.dart';
 import 'package:twitter_clone/features/home/domain/entities/tweet.dart';
@@ -21,6 +22,9 @@ class TweetCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final blocProvider = BlocProvider.of<AppUserCubit>(context);
+    final state = blocProvider.state;
+    final String userId = (state is AppUserLoggedIn) ? state.user.uid : '';
     return BlocBuilder<HomeBloc, HomeState>(
       builder: (context, state) {
         final userEntity = state.users[tweet.userId];
@@ -102,6 +106,12 @@ class TweetCard extends StatelessWidget {
                                 text: (tweet.reshareCount).toString(),
                                 onTap: () {}),
                             LikeButton(
+                              isLiked: tweet.likes.contains(userId),
+                              onTap: (isLiked) async {
+                                context.read<HomeBloc>().add(LikeTweet(
+                                    tweet: tweet, currentUserId: userId));
+                                return !isLiked;
+                              },
                               // ignore: body_might_complete_normally_nullable
                               likeBuilder: (isLiked) {
                                 isLiked
