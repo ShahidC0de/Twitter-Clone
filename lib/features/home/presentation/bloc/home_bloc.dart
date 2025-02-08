@@ -9,6 +9,7 @@ import 'package:twitter_clone/features/home/domain/usecases/create_tweet_usecase
 import 'package:twitter_clone/features/home/domain/usecases/fetch_all_tweets_usecase.dart';
 import 'package:twitter_clone/features/home/domain/usecases/get_user_data_usecase.dart';
 import 'package:twitter_clone/features/home/domain/usecases/like_tweet_usecase.dart';
+import 'package:twitter_clone/features/home/domain/usecases/reshare_tweet_usecase.dart';
 import 'package:twitter_clone/features/home/presentation/bloc/home_state.dart';
 
 part 'home_event.dart';
@@ -18,21 +19,40 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
   final GetUserDataUsecase _getUserDataUsecase;
   final CreateTweetUsecase _createTweetUsecase;
   final LikeTweetUsecase _likeTweetUsecase;
+  final ReshareTweetUsecase _reshareTweetUsecase;
 
   HomeBloc({
     required FetchAllTweetsUsecase fetchAllTweetsUsecase,
     required GetUserDataUsecase getUserDataUsecase,
     required CreateTweetUsecase createTweetUsecase,
     required LikeTweetUsecase likeTweetUsecase,
+    required ReshareTweetUsecase reshareTweetUsecase,
   })  : _fetchAllTweetsUsecase = fetchAllTweetsUsecase,
         _getUserDataUsecase = getUserDataUsecase,
         _createTweetUsecase = createTweetUsecase,
         _likeTweetUsecase = likeTweetUsecase,
+        _reshareTweetUsecase = reshareTweetUsecase,
         super(const HomeInitial()) {
     on<FetchAllTweets>(_onFetchAllTweets);
     on<GetUser>(_onGetUser);
     on<ShareTweet>(_onShareTweet);
     on<LikeTweet>(_likeTweet);
+  }
+  // resharing the tweet
+  Future<void> _reshareTweet(
+      ReshareTweet event, Emitter<HomeState> emit) async {
+    try {
+      final response = await _reshareTweetUsecase.call(ReshareTweetParams(
+          tweet: event.tweet, currentUserId: event.currentUserId));
+      response.fold((failure) {
+        emit(state.copyWith(errorMessage: "could'nt shared the tweet"));
+      }, (success) {
+        final updatedTweets = List<Tweet>.from(state.tweets)
+          ..insert(0, success);
+
+        emit(state.copyWith(tweets: updatedTweets));
+      });
+    } catch (e) {}
   }
 
 // Liking the tweet

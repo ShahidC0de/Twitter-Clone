@@ -15,7 +15,8 @@ class Tweetmodel extends Tweet {
       required super.likes,
       required super.commentIds,
       required super.tweetId,
-      required super.reshareCount});
+      required super.reshareCount,
+      required super.retweetedBy});
   // to map function
   Map<String, dynamic> toMap() {
     return {
@@ -51,6 +52,7 @@ class Tweetmodel extends Tweet {
       commentIds: List<String>.from(map['commentIds'] as List? ?? []),
       tweetId: map['tweetId'] as String? ?? '',
       reshareCount: map['reshareCount'] as int? ?? 0,
+      retweetedBy: map['retweetedBy'] ?? '',
     );
   }
 
@@ -66,18 +68,21 @@ class Tweetmodel extends Tweet {
     List<String>? commentIds,
     String? tweetId,
     int? reshareCount,
+    String? retweetedBy,
   }) {
     return Tweetmodel(
-        text: text ?? this.text,
-        hashtags: hashtags ?? this.hashtags,
-        link: link ?? this.link,
-        imageList: imageList ?? this.imageList,
-        userId: userId ?? this.userId,
-        tweetType: tweetType ?? this.tweetType,
-        tweetedAt: tweetedAt ?? this.tweetedAt,
-        likes: likes ?? this.likes,
-        commentIds: commentIds ?? this.commentIds,
-        tweetId: tweetId ?? this.tweetId,
-        reshareCount: reshareCount ?? this.reshareCount);
+      text: text ?? this.text,
+      hashtags: hashtags ?? this.hashtags,
+      link: link ?? this.link,
+      imageList: imageList ?? this.imageList,
+      userId: userId ?? this.userId,
+      tweetType: tweetType ?? this.tweetType,
+      tweetedAt: tweetedAt ?? this.tweetedAt,
+      likes: likes ?? this.likes,
+      commentIds: commentIds ?? this.commentIds,
+      tweetId: tweetId ?? this.tweetId,
+      reshareCount: reshareCount ?? this.reshareCount,
+      retweetedBy: retweetedBy ?? this.retweetedBy,
+    );
   }
 }

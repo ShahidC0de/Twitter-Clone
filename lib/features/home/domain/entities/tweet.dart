@@ -15,35 +15,40 @@ class Tweet {
   final List<String> commentIds;
   final String tweetId;
   final int reshareCount;
+  final String retweetedBy;
 
-  const Tweet(
-      {required this.text,
-      required this.hashtags,
-      required this.link,
-      required this.imageList,
-      required this.userId,
-      required this.tweetType,
-      required this.tweetedAt,
-      required this.likes,
-      required this.commentIds,
-      required this.tweetId,
-      required this.reshareCount});
+  const Tweet({
+    required this.text,
+    required this.hashtags,
+    required this.link,
+    required this.imageList,
+    required this.userId,
+    required this.tweetType,
+    required this.tweetedAt,
+    required this.likes,
+    required this.commentIds,
+    required this.tweetId,
+    required this.reshareCount,
+    required this.retweetedBy,
+  });
   // to map functionality
 }
 
 extension TweetMapper on Tweet {
   Tweetmodel toTweetModel() {
     return Tweetmodel(
-        text: text,
-        hashtags: hashtags,
-        link: link,
-        imageList: imageList,
-        userId: userId,
-        tweetType: tweetType,
-        tweetedAt: tweetedAt,
-        likes: likes,
-        commentIds: commentIds,
-        tweetId: tweetId,
-        reshareCount: reshareCount);
+      text: text,
+      hashtags: hashtags,
+      link: link,
+      imageList: imageList,
+      userId: userId,
+      tweetType: tweetType,
+      tweetedAt: tweetedAt,
+      likes: likes,
+      commentIds: commentIds,
+      tweetId: tweetId,
+      reshareCount: reshareCount,
+      retweetedBy: retweetedBy,
+    );
   }
 }

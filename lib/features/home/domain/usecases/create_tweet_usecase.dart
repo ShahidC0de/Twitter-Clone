@@ -34,6 +34,7 @@ class CreateTweetUsecase implements Usecase<void, CreateTweetParams> {
       commentIds: const [],
       tweetId: DateTime.now().millisecondsSinceEpoch.toString(),
       reshareCount: 0,
+      retweetedBy: '',
     );
     return await _homeRepository.shareTweet(tweet);
   }

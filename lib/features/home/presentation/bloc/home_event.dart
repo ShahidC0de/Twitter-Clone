@@ -29,3 +29,12 @@ class LikeTweet extends HomeEvent {
     required this.currentUserId,
   });
 }
+
+class ReshareTweet extends HomeEvent {
+  final Tweet tweet;
+  final String currentUserId;
+  ReshareTweet({
+    required this.tweet,
+    required this.currentUserId,
+  });
+}

@@ -29,7 +29,7 @@ class HomeRepositoryImpl implements HomeRepository {
   FutureEither shareTweet(Tweet tweet) async {
     try {
       final response =
-          await _homeRemoteDataSource.shareTweet(tweet.toTweetModel());
+          await _homeRemoteDataSource.createTweet(tweet.toTweetModel());
 
       return right(response);
     } catch (e) {
@@ -52,6 +52,18 @@ class HomeRepositoryImpl implements HomeRepository {
     try {
       return right(await _homeRemoteDataSource.likeTweet(
           tweet.toTweetModel(), currentUserId));
+    } catch (e) {
+      return left(Failure(e.toString(), StackTrace.current));
+    }
+  }
+
+  @override
+  FutureEither<Tweet> reshareTweet(Tweet tweet, String currentUser) async {
+    try {
+      await _homeRemoteDataSource.updateReshareCount(tweet.toTweetModel());
+      Tweet tweetGot = await _homeRemoteDataSource.reshareTweet(
+          tweet.toTweetModel(), currentUser);
+      return right(tweetGot);
     } catch (e) {
       return left(Failure(e.toString(), StackTrace.current));
     }

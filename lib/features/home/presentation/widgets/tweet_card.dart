@@ -104,7 +104,10 @@ class TweetCard extends StatelessWidget {
                             TweetIconButton(
                                 pathName: AssetsConstants.retweetIcon,
                                 text: (tweet.reshareCount).toString(),
-                                onTap: () {}),
+                                onTap: () {
+                                  context.read<HomeBloc>().add(ReshareTweet(
+                                      tweet: tweet, currentUserId: userId));
+                                }),
                             LikeButton(
                               isLiked: tweet.likes.contains(userId),
                               onTap: (isLiked) async {

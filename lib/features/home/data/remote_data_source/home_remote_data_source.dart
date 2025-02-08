@@ -12,9 +12,11 @@ import 'package:twitter_clone/features/home/data/remote_data_source/storage_remo
 abstract interface class HomeRemoteDataSource {
   String get getUserId;
   Future<List<Tweetmodel>> getAllTweets();
-  Future<Tweetmodel> shareTweet(Tweetmodel tweet);
+  Future<Tweetmodel> createTweet(Tweetmodel tweet);
   Future<UserModel> getUserData(String userId);
   Future<void> likeTweet(Tweetmodel tweet, String currentUserId);
+  Future<void> updateReshareCount(Tweetmodel tweet);
+  Future<Tweetmodel> reshareTweet(Tweetmodel tweet, String currentUser);
 }
 
 class HomeRemoteDataSourceImpl implements HomeRemoteDataSource {
@@ -69,7 +71,7 @@ class HomeRemoteDataSourceImpl implements HomeRemoteDataSource {
   }
 
   @override
-  Future<Tweetmodel> shareTweet(Tweetmodel tweetModel) async {
+  Future<Tweetmodel> createTweet(Tweetmodel tweetModel) async {
     try {
       log('and here i am in remote data source');
       List<String> imageUrls = [];
@@ -133,6 +135,58 @@ class HomeRemoteDataSourceImpl implements HomeRemoteDataSource {
           .update({
         'likes': likes,
       });
+    } on FirebaseException catch (e) {
+      throw ServerException(
+          message: e.toString(), stackTrace: StackTrace.current);
+    } catch (e) {
+      throw ServerException(
+          message: e.toString(), stackTrace: StackTrace.current);
+    }
+  }
+
+  @override
+  Future<void> updateReshareCount(Tweetmodel tweet) async {
+    try {
+      await _firebaseFirestore
+          .collection(FirebaseConstants.usersTweetsCollection)
+          .doc(tweet.userId)
+          .collection('tweets')
+          .doc(tweet.tweetId)
+          .update({
+        'reshareCount': FieldValue.increment(1),
+      });
+    } on FirebaseException catch (e) {
+      throw ServerException(
+          message: e.toString(), stackTrace: StackTrace.current);
+    } catch (e) {
+      throw ServerException(
+          message: e.toString(), stackTrace: StackTrace.current);
+    }
+  }
+
+// resharing tweet
+  @override
+  Future<Tweetmodel> reshareTweet(Tweetmodel tweet, String currentUser) async {
+    try {
+      await _firebaseFirestore
+          .collection(FirebaseConstants.usersTweetsCollection)
+          .doc(currentUser)
+          .collection('tweets')
+          .doc(tweet.tweetId + currentUser)
+          .set(tweet.toMap());
+      DocumentSnapshot documentSnapshot = await _firebaseFirestore
+          .collection(FirebaseConstants.usersTweetsCollection)
+          .doc(currentUser)
+          .collection('tweets')
+          .doc(tweet.tweetId + currentUser)
+          .get();
+      if (documentSnapshot.data() != null) {
+        final rawData = documentSnapshot.data();
+        return Tweetmodel.fromMap(rawData as Map<String, dynamic>);
+      } else {
+        throw ServerException(
+            message: 'snapshot data is null', stackTrace: StackTrace.current);
+      }
     } on FirebaseException catch (e) {
       throw ServerException(
           message: e.toString(), stackTrace: StackTrace.current);
