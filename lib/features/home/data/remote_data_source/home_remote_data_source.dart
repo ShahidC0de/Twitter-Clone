@@ -102,14 +102,15 @@ class HomeRemoteDataSourceImpl implements HomeRemoteDataSource {
     try {
       log(userId.toString());
       DocumentSnapshot documentSnapshot = await _firebaseFirestore
-          .collection('Users')
-          .doc('NyGnaafKlybWYLVKzVZU0LpCps92')
+          .collection(FirebaseConstants.userCollection)
+          .doc(userId)
           .get();
       log(documentSnapshot.data().toString());
       final rawData = documentSnapshot.data();
 
       return UserModel.fromMap(rawData as Map<String, dynamic>);
     } on FirebaseException catch (e) {
+      log(e.toString());
       throw ServerException(
           message: e.toString(), stackTrace: StackTrace.current);
     } catch (e) {
@@ -173,7 +174,16 @@ class HomeRemoteDataSourceImpl implements HomeRemoteDataSource {
           .doc(currentUser)
           .collection('tweets')
           .doc(tweet.tweetId + currentUser)
-          .set(tweet.toMap());
+          .set(tweet
+              .copyWith(
+                retweetedBy: currentUser,
+                tweetId: tweet.tweetId + currentUser,
+                tweetedAt: DateTime.now(),
+                likes: [],
+                commentIds: [],
+                reshareCount: 0,
+              )
+              .toMap());
       DocumentSnapshot documentSnapshot = await _firebaseFirestore
           .collection(FirebaseConstants.usersTweetsCollection)
           .doc(currentUser)

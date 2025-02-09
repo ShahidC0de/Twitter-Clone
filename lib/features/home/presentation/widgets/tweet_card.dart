@@ -24,12 +24,13 @@ class TweetCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final blocProvider = BlocProvider.of<AppUserCubit>(context);
     final state = blocProvider.state;
-    final String userId = (state is AppUserLoggedIn) ? state.user.uid : '';
+    final String currentUserId =
+        (state is AppUserLoggedIn) ? state.user.uid : '';
     return BlocBuilder<HomeBloc, HomeState>(
       builder: (context, state) {
-        final userEntity = state.users[tweet.userId];
+        final tweetUserId = state.users[tweet.userId];
 
-        if (userEntity == null) {
+        if (tweetUserId == null) {
           context.read<HomeBloc>().add(GetUser(userId: tweet.userId));
           return const Loader();
         }
@@ -42,7 +43,7 @@ class TweetCard extends StatelessWidget {
                 Container(
                   margin: const EdgeInsets.all(10),
                   child: CircleAvatar(
-                    backgroundImage: NetworkImage(userEntity.profilePic),
+                    backgroundImage: NetworkImage(tweetUserId.profilePic),
                     radius: 30,
                   ),
                 ),
@@ -50,13 +51,35 @@ class TweetCard extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      // retweeted thing...
+                      if (tweet.retweetedBy.isNotEmpty)
+                        Row(
+                          children: [
+                            SvgPicture.asset(
+                              AssetsConstants.retweetIcon,
+                              color: Pallete.greyColor,
+                              height: 20,
+                            ),
+                            const SizedBox(
+                              width: 20,
+                            ),
+                            Expanded(
+                              child: Text(
+                                '${tweet.retweetedBy} retweeted',
+                                style: const TextStyle(
+                                  color: Pallete.greyColor,
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                            )
+                          ],
+                        ),
                       Row(
                         children: [
                           Container(
                             margin: const EdgeInsets.only(right: 5),
                             child: Text(
-                              userEntity.name,
+                              tweetUserId.name,
                               style: const TextStyle(
                                 fontSize: 19,
                                 fontWeight: FontWeight.bold,
@@ -64,7 +87,7 @@ class TweetCard extends StatelessWidget {
                             ),
                           ),
                           Text(
-                            '@${userEntity.name}  ${timeago.format(
+                            '@${tweetUserId.name}  ${timeago.format(
                               tweet.tweetedAt,
                               locale: 'en_short',
                             )}',
@@ -104,15 +127,17 @@ class TweetCard extends StatelessWidget {
                             TweetIconButton(
                                 pathName: AssetsConstants.retweetIcon,
                                 text: (tweet.reshareCount).toString(),
-                                onTap: () {
+                                onTap: () async {
                                   context.read<HomeBloc>().add(ReshareTweet(
-                                      tweet: tweet, currentUserId: userId));
+                                      tweet: tweet,
+                                      currentUserId: currentUserId));
                                 }),
                             LikeButton(
-                              isLiked: tweet.likes.contains(userId),
+                              isLiked: tweet.likes.contains(currentUserId),
                               onTap: (isLiked) async {
                                 context.read<HomeBloc>().add(LikeTweet(
-                                    tweet: tweet, currentUserId: userId));
+                                    tweet: tweet,
+                                    currentUserId: currentUserId));
                                 return !isLiked;
                               },
                               // ignore: body_might_complete_normally_nullable

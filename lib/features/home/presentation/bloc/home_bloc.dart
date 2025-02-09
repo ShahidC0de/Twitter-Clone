@@ -37,6 +37,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     on<GetUser>(_onGetUser);
     on<ShareTweet>(_onShareTweet);
     on<LikeTweet>(_likeTweet);
+    on<ReshareTweet>(_reshareTweet);
   }
   // resharing the tweet
   Future<void> _reshareTweet(
@@ -52,7 +53,10 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
 
         emit(state.copyWith(tweets: updatedTweets));
       });
-    } catch (e) {}
+    } catch (e) {
+      log('catch bloc ${e.toString()}');
+      emit(state.copyWith(errorMessage: null));
+    }
   }
 
 // Liking the tweet
@@ -91,6 +95,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
   // Fetch user data
   Future<void> _onGetUser(GetUser event, Emitter<HomeState> emit) async {
     if (state.users.containsKey(event.userId)) return;
+    emit(state.copyWith());
     try {
       final result =
           await _getUserDataUsecase.call(UserParams(userId: event.userId));

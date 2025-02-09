@@ -31,6 +31,7 @@ class Tweetmodel extends Tweet {
       'commentIds': commentIds,
       'reshareCount': reshareCount,
       'tweetId': tweetId,
+      'retweetedBy': retweetedBy,
     };
   }
 
