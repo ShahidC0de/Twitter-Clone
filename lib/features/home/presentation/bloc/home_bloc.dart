@@ -2,7 +2,6 @@ import 'dart:async';
 import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:twitter_clone/core/entities/user_entity.dart';
 import 'package:twitter_clone/core/usecases/usecase.dart';
 import 'package:twitter_clone/features/home/domain/entities/tweet.dart';
 import 'package:twitter_clone/features/home/domain/usecases/create_tweet_usecase.dart';
@@ -95,19 +94,25 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
   // Fetch user data
   Future<void> _onGetUser(GetUser event, Emitter<HomeState> emit) async {
     if (state.users.containsKey(event.userId)) return;
-    emit(state.copyWith());
+
     try {
       final result =
           await _getUserDataUsecase.call(UserParams(userId: event.userId));
       result.fold(
-        (failure) => emit(state.copyWith(errorMessage: 'Failed to fetch user')),
+        (failure) {
+          emit(state.copyWith(
+              errorMessage: 'Failed to fetch user: ${failure.message}'));
+        },
         (user) {
-          final updatedUsers = Map<String, UserEntity>.from(state.users)
-            ..[event.userId] = user;
+          final updatedUsers = {
+            ...state.users,
+            event.userId: user
+          }; // More efficient way
           emit(state.copyWith(users: updatedUsers));
         },
       );
-    } catch (e) {
+    } catch (e, stackTrace) {
+      log("Error fetching user: $e\n$stackTrace"); // Improved debugging
       emit(state.copyWith(errorMessage: 'Failed to fetch user'));
     }
   }

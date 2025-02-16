@@ -1,9 +1,10 @@
+import 'dart:developer';
+
 import 'package:any_link_preview/any_link_preview.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:like_button/like_button.dart';
-import 'package:twitter_clone/core/common/loader.dart';
 import 'package:twitter_clone/core/constants/assets_constants.dart';
 import 'package:twitter_clone/core/cubits/app_user/app_user_cubit.dart';
 import 'package:twitter_clone/core/enums/tweet_type_enum.dart';
@@ -26,13 +27,22 @@ class TweetCard extends StatelessWidget {
     final state = blocProvider.state;
     final String currentUserId =
         (state is AppUserLoggedIn) ? state.user.uid : '';
+
     return BlocBuilder<HomeBloc, HomeState>(
       builder: (context, state) {
-        final tweetUserId = state.users[tweet.userId];
+        final tweetUser = state.users[tweet.userId];
+        log('hello the request data for ${tweet.userId}');
 
-        if (tweetUserId == null) {
+        if (tweetUser == null) {
+          if (tweet.retweetedBy.isNotEmpty) {
+            context.read<HomeBloc>().add(GetUser(userId: tweet.retweetedBy));
+          }
           context.read<HomeBloc>().add(GetUser(userId: tweet.userId));
-          return const Loader();
+          log('hello the request data for ${tweet.userId}');
+          return const ListTile(
+            leading: CircleAvatar(child: Icon(Icons.person)),
+            title: Text("Fetching user..."),
+          );
         }
 
         return Column(
@@ -43,7 +53,7 @@ class TweetCard extends StatelessWidget {
                 Container(
                   margin: const EdgeInsets.all(10),
                   child: CircleAvatar(
-                    backgroundImage: NetworkImage(tweetUserId.profilePic),
+                    backgroundImage: NetworkImage(tweetUser.profilePic),
                     radius: 30,
                   ),
                 ),
@@ -59,12 +69,10 @@ class TweetCard extends StatelessWidget {
                               color: Pallete.greyColor,
                               height: 20,
                             ),
-                            const SizedBox(
-                              width: 20,
-                            ),
+                            const SizedBox(width: 20),
                             Expanded(
                               child: Text(
-                                '${tweet.retweetedBy} retweeted',
+                                '${tweetUser.name} retweeted',
                                 style: const TextStyle(
                                   color: Pallete.greyColor,
                                   fontSize: 16,
@@ -79,7 +87,7 @@ class TweetCard extends StatelessWidget {
                           Container(
                             margin: const EdgeInsets.only(right: 5),
                             child: Text(
-                              tweetUserId.name,
+                              tweetUser.name,
                               style: const TextStyle(
                                 fontSize: 19,
                                 fontWeight: FontWeight.bold,
@@ -87,7 +95,7 @@ class TweetCard extends StatelessWidget {
                             ),
                           ),
                           Text(
-                            '@${tweetUserId.name}  ${timeago.format(
+                            '@${tweetUser.name}  ${timeago.format(
                               tweet.tweetedAt,
                               locale: 'en_short',
                             )}',
@@ -98,7 +106,6 @@ class TweetCard extends StatelessWidget {
                           ),
                         ],
                       ),
-                      // replied to
                       HashtageWidget(text: tweet.text),
                       if (tweet.tweetType == TweetType.image)
                         CrousalImage(imageLinks: tweet.imageList),
@@ -140,17 +147,15 @@ class TweetCard extends StatelessWidget {
                                     currentUserId: currentUserId));
                                 return !isLiked;
                               },
-                              // ignore: body_might_complete_normally_nullable
                               likeBuilder: (isLiked) {
-                                isLiked
-                                    ? SvgPicture.asset(
-                                        AssetsConstants.likeFilledIcon,
-                                        color: Pallete.redColor,
-                                      )
-                                    : SvgPicture.asset(
-                                        AssetsConstants.likeOutlinedIcon,
-                                        color: Pallete.greyColor,
-                                      );
+                                return SvgPicture.asset(
+                                  isLiked
+                                      ? AssetsConstants.likeFilledIcon
+                                      : AssetsConstants.likeOutlinedIcon,
+                                  color: isLiked
+                                      ? Pallete.redColor
+                                      : Pallete.greyColor,
+                                );
                               },
                               likeCount: tweet.likes.length,
                               countBuilder: (likeCount, isLiked, text) {
@@ -172,9 +177,7 @@ class TweetCard extends StatelessWidget {
                           ],
                         ),
                       ),
-                      const SizedBox(
-                        height: 1,
-                      )
+                      const SizedBox(height: 1),
                     ],
                   ),
                 )

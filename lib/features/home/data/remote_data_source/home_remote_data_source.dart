@@ -99,24 +99,46 @@ class HomeRemoteDataSourceImpl implements HomeRemoteDataSource {
 
   @override
   Future<UserModel> getUserData(String userId) async {
-    try {
-      log(userId.toString());
-      DocumentSnapshot documentSnapshot = await _firebaseFirestore
-          .collection(FirebaseConstants.userCollection)
-          .doc(userId)
-          .get();
-      log(documentSnapshot.data().toString());
-      final rawData = documentSnapshot.data();
+    int retryCount = 0;
+    const int maxRetries = 3;
+    const Duration retryDelay = Duration(seconds: 2);
 
-      return UserModel.fromMap(rawData as Map<String, dynamic>);
-    } on FirebaseException catch (e) {
-      log(e.toString());
-      throw ServerException(
-          message: e.toString(), stackTrace: StackTrace.current);
-    } catch (e) {
-      throw ServerException(
-          message: e.toString(), stackTrace: StackTrace.current);
+    while (retryCount < maxRetries) {
+      try {
+        log('Fetching user data for: $userId (Attempt ${retryCount + 1})');
+        log('the user Id is $userId');
+
+        DocumentSnapshot documentSnapshot =
+            await _firebaseFirestore.collection('Users').doc(userId).get();
+
+        if (!documentSnapshot.exists) {
+          log("User data not found for ID: $userId");
+          throw Exception("User data not found");
+        }
+
+        final rawData = documentSnapshot.data();
+        log(rawData.toString());
+
+        return UserModel.fromMap(rawData as Map<String, dynamic>);
+      } on FirebaseException catch (e) {
+        log("Attempt ${retryCount + 1} failed: ${e.toString()}");
+
+        if (retryCount == maxRetries - 1) {
+          throw ServerException(
+              message: e.toString(), stackTrace: StackTrace.current);
+        }
+
+        await Future.delayed(retryDelay);
+        retryCount++;
+      } catch (e) {
+        log("Unexpected error: $e");
+        throw ServerException(
+            message: e.toString(), stackTrace: StackTrace.current);
+      }
     }
+
+    throw ServerException(
+        message: "Failed to fetch user data", stackTrace: StackTrace.current);
   }
 
   @override
