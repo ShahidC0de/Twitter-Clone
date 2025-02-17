@@ -31,10 +31,13 @@ class HomeRemoteDataSourceImpl implements HomeRemoteDataSource {
         _firebaseAuth = firebaseAuth,
         _storageRemoteDataSource = storageRemoteDataSource;
 
-// GETTING CURRENT USER ID;
+// ...........................................GETTING CURRENT USER ID........................................
+
   @override
   String get getUserId => _firebaseAuth.currentUser!.uid;
-// GETTING ALL TWEETS OF ALL USERS;
+
+// ......................................GETTING ALL TWEETS OF ALL USERS.......................................
+
   @override
   Future<List<Tweetmodel>> getAllTweets() async {
     try {
@@ -70,6 +73,7 @@ class HomeRemoteDataSourceImpl implements HomeRemoteDataSource {
     }
   }
 
+// ...................................................CREATING TWEET............................................
   @override
   Future<Tweetmodel> createTweet(Tweetmodel tweetModel) async {
     try {
@@ -97,6 +101,7 @@ class HomeRemoteDataSourceImpl implements HomeRemoteDataSource {
     }
   }
 
+//.................................................GETTING USER DATA BASED ON TWEET.............................
   @override
   Future<UserModel> getUserData(String userId) async {
     int retryCount = 0;
@@ -141,6 +146,7 @@ class HomeRemoteDataSourceImpl implements HomeRemoteDataSource {
         message: "Failed to fetch user data", stackTrace: StackTrace.current);
   }
 
+// ........................................................LIKING TWEET.........................................
   @override
   Future<void> likeTweet(Tweetmodel tweet, String currentUserId) async {
     try {
@@ -167,6 +173,7 @@ class HomeRemoteDataSourceImpl implements HomeRemoteDataSource {
     }
   }
 
+//........................... UPDATING RESHARE COUNT OF THE TWEET................................................
   @override
   Future<void> updateReshareCount(Tweetmodel tweet) async {
     try {
@@ -187,7 +194,7 @@ class HomeRemoteDataSourceImpl implements HomeRemoteDataSource {
     }
   }
 
-// resharing tweet
+// .......................... 1ST UPDATING RESHARE COUNT AND NOW RESHARING THE TWEET.............................
   @override
   Future<Tweetmodel> reshareTweet(Tweetmodel tweet, String currentUser) async {
     try {
