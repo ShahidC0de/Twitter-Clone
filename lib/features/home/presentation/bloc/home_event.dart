@@ -9,10 +9,12 @@ class ShareTweet extends HomeEvent {
   final String userId;
   final String tweetText;
   final List<String> imagesList;
+  final String? repliedTo;
   ShareTweet({
     required this.userId,
     required this.tweetText,
     required this.imagesList,
+    this.repliedTo,
   });
 }
 
@@ -36,5 +38,12 @@ class ReshareTweet extends HomeEvent {
   ReshareTweet({
     required this.tweet,
     required this.currentUserId,
+  });
+}
+
+class FetchCommentsTweetsEvent extends HomeEvent {
+  final String tweetId;
+  FetchCommentsTweetsEvent({
+    required this.tweetId,
   });
 }

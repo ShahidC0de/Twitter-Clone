@@ -17,6 +17,7 @@ abstract interface class HomeRemoteDataSource {
   Future<void> likeTweet(Tweetmodel tweet, String currentUserId);
   Future<void> updateReshareCount(Tweetmodel tweet);
   Future<Tweetmodel> reshareTweet(Tweetmodel tweet, String currentUser);
+  Future<List<Tweetmodel>> getTweetCommentsORreplies(String tweetId);
 }
 
 class HomeRemoteDataSourceImpl implements HomeRemoteDataSource {
@@ -41,14 +42,10 @@ class HomeRemoteDataSourceImpl implements HomeRemoteDataSource {
   @override
   Future<List<Tweetmodel>> getAllTweets() async {
     try {
-      QuerySnapshot querySnapshot =
-          await _firebaseFirestore.collectionGroup('tweets').get();
-
-      log("this is the new query data and documents are${querySnapshot.docs.length.toString()}");
       // Use a collection group query to fetch all tweets from all users
       QuerySnapshot tweetsSnapshot = await _firebaseFirestore
-          .collectionGroup(
-              'tweets') // Use a common sub-collection name for all users
+          .collectionGroup('tweets')
+          // Use a common sub-collection name for all users
           .get();
 
       // Map tweets to TweetModel and add to the list
@@ -56,18 +53,23 @@ class HomeRemoteDataSourceImpl implements HomeRemoteDataSource {
           .map(
             (doc) => Tweetmodel.fromMap(doc.data() as Map<String, dynamic>),
           )
+          .where((tweet) =>
+              // ignore: unnecessary_null_comparison
+              tweet.repliedTo == null || tweet.repliedTo.trim() == '')
           .toList();
-
-      // Log tweets for debugging
-      for (var i = 0; i < allTweets.length; i++) {
-        log('Tweet ${i + 1}: ${allTweets[i].toMap()}');
+      log('Filter documents are ${allTweets.length}');
+      for (var doc in tweetsSnapshot.docs) {
+        var data = doc.data() as Map<String, dynamic>;
+        log("Tweet ID: ${doc.id}, repliedTo: ${data['repliedTo']}");
       }
 
       return allTweets;
     } on FirebaseException catch (e) {
+      log(e.toString());
       throw ServerException(
           message: e.toString(), stackTrace: StackTrace.current);
     } catch (e) {
+      log(e.toString());
       throw ServerException(
           message: e.toString(), stackTrace: StackTrace.current);
     }
@@ -232,6 +234,24 @@ class HomeRemoteDataSourceImpl implements HomeRemoteDataSource {
     } catch (e) {
       throw ServerException(
           message: e.toString(), stackTrace: StackTrace.current);
+    }
+  }
+
+// ......................................FETCH COMMENTS OF SPECFIC TWEET............................................
+  @override
+  Future<List<Tweetmodel>> getTweetCommentsORreplies(String tweetId) async {
+    try {
+      QuerySnapshot querySnapshot =
+          await _firebaseFirestore.collectionGroup('tweets').get();
+      List<Tweetmodel> replies = querySnapshot.docs
+          .map((doc) => Tweetmodel.fromMap(doc.data() as Map<String, dynamic>))
+          .where((tweet) => tweet.repliedTo == tweetId)
+          .toList();
+      return replies;
+    } on FirebaseException catch (e) {
+      throw Exception(e.toString());
+    } catch (e) {
+      throw Exception(e.toString());
     }
   }
 }

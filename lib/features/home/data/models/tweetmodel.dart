@@ -4,19 +4,21 @@ import 'package:twitter_clone/core/enums/tweet_type_enum.dart';
 import 'package:twitter_clone/features/home/domain/entities/tweet.dart';
 
 class Tweetmodel extends Tweet {
-  const Tweetmodel(
-      {required super.text,
-      required super.hashtags,
-      required super.link,
-      required super.imageList,
-      required super.userId,
-      required super.tweetType,
-      required super.tweetedAt,
-      required super.likes,
-      required super.commentIds,
-      required super.tweetId,
-      required super.reshareCount,
-      required super.retweetedBy});
+  const Tweetmodel({
+    required super.text,
+    required super.hashtags,
+    required super.link,
+    required super.imageList,
+    required super.userId,
+    required super.tweetType,
+    required super.tweetedAt,
+    required super.likes,
+    required super.commentIds,
+    required super.tweetId,
+    required super.reshareCount,
+    required super.retweetedBy,
+    required super.repliedTo,
+  });
   // to map function
   Map<String, dynamic> toMap() {
     return {
@@ -32,6 +34,7 @@ class Tweetmodel extends Tweet {
       'reshareCount': reshareCount,
       'tweetId': tweetId,
       'retweetedBy': retweetedBy,
+      'repliedTo': repliedTo,
     };
   }
 
@@ -54,6 +57,7 @@ class Tweetmodel extends Tweet {
       tweetId: map['tweetId'] as String? ?? '',
       reshareCount: map['reshareCount'] as int? ?? 0,
       retweetedBy: map['retweetedBy'] ?? '',
+      repliedTo: map['repliedTo'] ?? '',
     );
   }
 
@@ -70,6 +74,7 @@ class Tweetmodel extends Tweet {
     String? tweetId,
     int? reshareCount,
     String? retweetedBy,
+    String? repliedTo,
   }) {
     return Tweetmodel(
       text: text ?? this.text,
@@ -84,6 +89,7 @@ class Tweetmodel extends Tweet {
       tweetId: tweetId ?? this.tweetId,
       reshareCount: reshareCount ?? this.reshareCount,
       retweetedBy: retweetedBy ?? this.retweetedBy,
+      repliedTo: repliedTo ?? this.repliedTo,
     );
   }
 }

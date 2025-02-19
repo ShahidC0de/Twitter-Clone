@@ -16,6 +16,7 @@ class Tweet {
   final String tweetId;
   final int reshareCount;
   final String retweetedBy;
+  final String repliedTo;
 
   const Tweet({
     required this.text,
@@ -30,6 +31,7 @@ class Tweet {
     required this.tweetId,
     required this.reshareCount,
     required this.retweetedBy,
+    required this.repliedTo,
   });
   // to map functionality
 }
@@ -49,6 +51,7 @@ extension TweetMapper on Tweet {
       tweetId: tweetId,
       reshareCount: reshareCount,
       retweetedBy: retweetedBy,
+      repliedTo: repliedTo,
     );
   }
 }

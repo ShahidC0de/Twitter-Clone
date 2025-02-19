@@ -68,4 +68,15 @@ class HomeRepositoryImpl implements HomeRepository {
       return left(Failure(e.toString(), StackTrace.current));
     }
   }
+
+  @override
+  FutureEither<List<Tweet>> getCommentsOfTweet(String tweetId) async {
+    try {
+      final response =
+          await _homeRemoteDataSource.getTweetCommentsORreplies(tweetId);
+      return right(response);
+    } catch (e) {
+      return left(Failure(e.toString(), StackTrace.current));
+    }
+  }
 }

@@ -20,6 +20,7 @@ class CreateTweetUsecase implements Usecase<void, CreateTweetParams> {
   @override
   FutureEither<void> call(CreateTweetParams params) async {
     log('i am in createtweetusecase');
+    log('this is the repliedTo${params.repliedTo}');
     final hashTags = _tweetParser.getHashTagsFromText(params.tweetText);
     final link = _tweetParser.getLinkFromTheText(params.tweetText);
     Tweet tweet = Tweet(
@@ -35,6 +36,7 @@ class CreateTweetUsecase implements Usecase<void, CreateTweetParams> {
       tweetId: DateTime.now().millisecondsSinceEpoch.toString(),
       reshareCount: 0,
       retweetedBy: '',
+      repliedTo: params.repliedTo ?? '',
     );
     return await _homeRepository.shareTweet(tweet);
   }
@@ -44,9 +46,11 @@ class CreateTweetParams {
   final String userId;
   final String tweetText;
   final List<String> tweetImages;
+  final String? repliedTo;
   CreateTweetParams({
     required this.userId,
     required this.tweetText,
     required this.tweetImages,
+    this.repliedTo,
   });
 }

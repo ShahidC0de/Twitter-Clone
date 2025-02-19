@@ -6,6 +6,7 @@ import 'package:twitter_clone/core/usecases/usecase.dart';
 import 'package:twitter_clone/features/home/domain/entities/tweet.dart';
 import 'package:twitter_clone/features/home/domain/usecases/create_tweet_usecase.dart';
 import 'package:twitter_clone/features/home/domain/usecases/fetch_all_tweets_usecase.dart';
+import 'package:twitter_clone/features/home/domain/usecases/fetch_comments_tweets.dart';
 import 'package:twitter_clone/features/home/domain/usecases/get_user_data_usecase.dart';
 import 'package:twitter_clone/features/home/domain/usecases/like_tweet_usecase.dart';
 import 'package:twitter_clone/features/home/domain/usecases/reshare_tweet_usecase.dart';
@@ -19,6 +20,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
   final CreateTweetUsecase _createTweetUsecase;
   final LikeTweetUsecase _likeTweetUsecase;
   final ReshareTweetUsecase _reshareTweetUsecase;
+  final FetchCommentsTweetsUsecase _fetchCommentsTweetsUsecase;
 
   HomeBloc({
     required FetchAllTweetsUsecase fetchAllTweetsUsecase,
@@ -26,17 +28,20 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     required CreateTweetUsecase createTweetUsecase,
     required LikeTweetUsecase likeTweetUsecase,
     required ReshareTweetUsecase reshareTweetUsecase,
+    required FetchCommentsTweetsUsecase fetchCommentsTweetUsecase,
   })  : _fetchAllTweetsUsecase = fetchAllTweetsUsecase,
         _getUserDataUsecase = getUserDataUsecase,
         _createTweetUsecase = createTweetUsecase,
         _likeTweetUsecase = likeTweetUsecase,
         _reshareTweetUsecase = reshareTweetUsecase,
+        _fetchCommentsTweetsUsecase = fetchCommentsTweetUsecase,
         super(const HomeInitial()) {
     on<FetchAllTweets>(_onFetchAllTweets);
     on<GetUser>(_onGetUser);
     on<ShareTweet>(_onShareTweet);
     on<LikeTweet>(_likeTweet);
     on<ReshareTweet>(_reshareTweet);
+    on<FetchCommentsTweetsEvent>(_onFetchCommentsOfTweet);
   }
   // resharing the tweet
   Future<void> _reshareTweet(
@@ -121,9 +126,11 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
   Future<void> _onShareTweet(ShareTweet event, Emitter<HomeState> emit) async {
     try {
       final result = await _createTweetUsecase.call(CreateTweetParams(
-          userId: event.userId,
-          tweetText: event.tweetText,
-          tweetImages: event.imagesList));
+        userId: event.userId,
+        tweetText: event.tweetText,
+        tweetImages: event.imagesList,
+        repliedTo: event.repliedTo,
+      ));
       result.fold(
         (failure) =>
             emit(state.copyWith(errorMessage: 'Failed to share tweet')),
@@ -133,6 +140,21 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
       );
     } catch (e) {
       emit(state.copyWith(errorMessage: 'Failed to share tweet'));
+    }
+  }
+
+  Future<void> _onFetchCommentsOfTweet(
+      FetchCommentsTweetsEvent event, Emitter<HomeState> emit) async {
+    try {
+      final result = await _fetchCommentsTweetsUsecase
+          .call(FetchCommentsTweetsParams(tweetId: event.tweetId));
+      result.fold((failure) {
+        emit(state.copyWith(errorMessage: failure.message));
+      }, (success) {
+        emit(state.copyWith(tweetComments: success));
+      });
+    } catch (e) {
+      emit(state.copyWith(errorMessage: e.toString()));
     }
   }
 }
