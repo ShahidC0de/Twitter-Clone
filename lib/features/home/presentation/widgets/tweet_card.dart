@@ -119,6 +119,15 @@ class TweetCard extends StatelessWidget {
                             ),
                           ],
                         ),
+                        if (tweet.repliedTo.isNotEmpty)
+                          RichText(
+                              text: const TextSpan(
+                            text: 'Replying to',
+                            style: TextStyle(
+                              color: Pallete.greyColor,
+                              fontSize: 16,
+                            ),
+                          )),
                         HashtageWidget(text: tweet.text),
                         if (tweet.tweetType == TweetType.image)
                           CrousalImage(imageLinks: tweet.imageList),

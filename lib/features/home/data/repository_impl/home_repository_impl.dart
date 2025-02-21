@@ -79,4 +79,15 @@ class HomeRepositoryImpl implements HomeRepository {
       return left(Failure(e.toString(), StackTrace.current));
     }
   }
+
+  @override
+  FutureEither<Tweet> updateTweet(Tweet tweet) async {
+    try {
+      final response =
+          await _homeRemoteDataSource.updateTweet(tweet.toTweetModel());
+      return right(response);
+    } catch (e) {
+      return left(Failure(e.toString(), StackTrace.current));
+    }
+  }
 }

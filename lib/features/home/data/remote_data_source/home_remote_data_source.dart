@@ -18,6 +18,7 @@ abstract interface class HomeRemoteDataSource {
   Future<void> updateReshareCount(Tweetmodel tweet);
   Future<Tweetmodel> reshareTweet(Tweetmodel tweet, String currentUser);
   Future<List<Tweetmodel>> getTweetCommentsORreplies(String tweetId);
+  Future<Tweetmodel> updateTweet(Tweetmodel tweet);
 }
 
 class HomeRemoteDataSourceImpl implements HomeRemoteDataSource {
@@ -248,6 +249,23 @@ class HomeRemoteDataSourceImpl implements HomeRemoteDataSource {
           .where((tweet) => tweet.repliedTo == tweetId)
           .toList();
       return replies;
+    } on FirebaseException catch (e) {
+      throw Exception(e.toString());
+    } catch (e) {
+      throw Exception(e.toString());
+    }
+  }
+
+  @override
+  Future<Tweetmodel> updateTweet(Tweetmodel tweet) async {
+    try {
+      await _firebaseFirestore
+          .collection(FirebaseConstants.usersTweetsCollection)
+          .doc(tweet.userId)
+          .collection('tweets')
+          .doc(tweet.tweetId)
+          .set(tweet.toMap());
+      return tweet;
     } on FirebaseException catch (e) {
       throw Exception(e.toString());
     } catch (e) {

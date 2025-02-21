@@ -30,6 +30,7 @@ import 'package:twitter_clone/features/home/domain/usecases/like_tweet_usecase.d
 import 'package:twitter_clone/features/home/domain/usecases/reshare_tweet_usecase.dart';
 import 'package:twitter_clone/features/home/domain/usecases/tweet_parser.dart';
 import 'package:twitter_clone/features/home/domain/usecases/create_tweet_usecase.dart';
+import 'package:twitter_clone/features/home/domain/usecases/update_tweet_usecase.dart';
 import 'package:twitter_clone/features/home/presentation/bloc/home_bloc.dart';
 
 part "init_dependencies.dart";

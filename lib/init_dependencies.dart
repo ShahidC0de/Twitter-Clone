@@ -110,8 +110,11 @@ void _initHome() {
       () => ReshareTweetUsecase(homeRepository: serviceLocator()));
   serviceLocator.registerFactory(
       () => FetchCommentsTweetsUsecase(homeRepository: serviceLocator()));
+  serviceLocator.registerFactory(
+      () => UpdateTweetUsecase(homeRepository: serviceLocator()));
 
   serviceLocator.registerLazySingleton(() => HomeBloc(
+        updateTweetUsecase: serviceLocator(),
         fetchCommentsTweetUsecase: serviceLocator(),
         reshareTweetUsecase: serviceLocator(),
         likeTweetUsecase: serviceLocator(),

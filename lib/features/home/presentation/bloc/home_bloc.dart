@@ -10,6 +10,7 @@ import 'package:twitter_clone/features/home/domain/usecases/fetch_comments_tweet
 import 'package:twitter_clone/features/home/domain/usecases/get_user_data_usecase.dart';
 import 'package:twitter_clone/features/home/domain/usecases/like_tweet_usecase.dart';
 import 'package:twitter_clone/features/home/domain/usecases/reshare_tweet_usecase.dart';
+import 'package:twitter_clone/features/home/domain/usecases/update_tweet_usecase.dart';
 import 'package:twitter_clone/features/home/presentation/bloc/home_state.dart';
 
 part 'home_event.dart';
@@ -21,6 +22,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
   final LikeTweetUsecase _likeTweetUsecase;
   final ReshareTweetUsecase _reshareTweetUsecase;
   final FetchCommentsTweetsUsecase _fetchCommentsTweetsUsecase;
+  final UpdateTweetUsecase _updateTweetUsecase;
 
   HomeBloc({
     required FetchAllTweetsUsecase fetchAllTweetsUsecase,
@@ -28,6 +30,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     required CreateTweetUsecase createTweetUsecase,
     required LikeTweetUsecase likeTweetUsecase,
     required ReshareTweetUsecase reshareTweetUsecase,
+    required UpdateTweetUsecase updateTweetUsecase,
     required FetchCommentsTweetsUsecase fetchCommentsTweetUsecase,
   })  : _fetchAllTweetsUsecase = fetchAllTweetsUsecase,
         _getUserDataUsecase = getUserDataUsecase,
@@ -35,6 +38,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
         _likeTweetUsecase = likeTweetUsecase,
         _reshareTweetUsecase = reshareTweetUsecase,
         _fetchCommentsTweetsUsecase = fetchCommentsTweetUsecase,
+        _updateTweetUsecase = updateTweetUsecase,
         super(const HomeInitial()) {
     on<FetchAllTweets>(_onFetchAllTweets);
     on<GetUser>(_onGetUser);
@@ -42,6 +46,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     on<LikeTweet>(_likeTweet);
     on<ReshareTweet>(_reshareTweet);
     on<FetchCommentsTweetsEvent>(_onFetchCommentsOfTweet);
+    on<UpdateTweetEvent>(_updateTweet);
   }
   // resharing the tweet
   Future<void> _reshareTweet(
@@ -152,6 +157,22 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
         emit(state.copyWith(errorMessage: failure.message));
       }, (success) {
         emit(state.copyWith(tweetComments: success));
+      });
+    } catch (e) {
+      emit(state.copyWith(errorMessage: e.toString()));
+    }
+  }
+
+  Future<void> _updateTweet(
+      UpdateTweetEvent event, Emitter<HomeState> emit) async {
+    try {
+      final result =
+          await _updateTweetUsecase.call(UpdataTweetParams(tweet: event.tweet));
+      result.fold((failure) {
+        emit(state.copyWith(errorMessage: failure.message));
+      }, (success) {
+        final updatedTweets = [success, ...state.tweets];
+        emit(state.copyWith(tweets: updatedTweets));
       });
     } catch (e) {
       emit(state.copyWith(errorMessage: e.toString()));

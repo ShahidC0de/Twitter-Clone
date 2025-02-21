@@ -9,4 +9,5 @@ abstract interface class HomeRepository {
   FutureEitherVoid likeTweet(Tweet tweet, String currentUserId);
   FutureEither<Tweet> reshareTweet(Tweet tweet, String currentUser);
   FutureEither<List<Tweet>> getCommentsOfTweet(String tweetId);
+  FutureEither<Tweet> updateTweet(Tweet tweet);
 }

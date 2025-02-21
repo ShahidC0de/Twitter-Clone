@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:twitter_clone/core/common/loader.dart';
 import 'package:twitter_clone/core/cubits/app_user/app_user_cubit.dart';
+import 'package:twitter_clone/core/theme/theme.dart';
 import 'package:twitter_clone/core/utils/utilities.dart';
 import 'package:twitter_clone/features/home/domain/entities/tweet.dart';
 import 'package:twitter_clone/features/home/presentation/bloc/home_bloc.dart';
@@ -37,8 +38,16 @@ class _TweetCommentScreenState extends State<TweetCommentScreen> {
         title: const Text('Tweet'),
       ),
       body: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
         children: [
           TweetCard(tweet: widget.tweet),
+          const Text(
+            'Comments',
+            style: TextStyle(
+              color: Pallete.greyColor,
+              fontSize: 16,
+            ),
+          ),
           BlocConsumer<HomeBloc, HomeState>(
             listener: (context, state) {
               if (state.errorMessage != null) {
@@ -74,10 +83,14 @@ class _TweetCommentScreenState extends State<TweetCommentScreen> {
             final userId = state.user.uid;
             log('i am in comment screen and the tweetId is ${widget.tweet.tweetId}');
             context.read<HomeBloc>().add(ShareTweet(
-                userId: userId,
-                tweetText: value,
-                imagesList: const [],
-                repliedTo: widget.tweet.tweetId));
+                  userId: userId,
+                  tweetText: value,
+                  imagesList: const [],
+                  repliedTo: widget.tweet.tweetId,
+                ));
+            final Tweet updatedTweet = widget.tweet
+                .copyWith(commentIds: [...widget.tweet.commentIds, userId]);
+            context.read<HomeBloc>().add(UpdateTweetEvent(tweet: updatedTweet));
           }
         },
         decoration: const InputDecoration(

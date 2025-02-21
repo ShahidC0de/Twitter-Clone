@@ -47,3 +47,10 @@ class FetchCommentsTweetsEvent extends HomeEvent {
     required this.tweetId,
   });
 }
+
+class UpdateTweetEvent extends HomeEvent {
+  final Tweet tweet;
+  UpdateTweetEvent({
+    required this.tweet,
+  });
+}

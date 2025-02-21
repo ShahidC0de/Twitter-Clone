@@ -61,6 +61,7 @@ class Tweetmodel extends Tweet {
     );
   }
 
+  @override
   Tweetmodel copyWith({
     String? text,
     List<String>? hashtags,
