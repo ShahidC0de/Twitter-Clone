@@ -4,13 +4,14 @@ import 'package:twitter_clone/core/common/loader.dart';
 import 'package:twitter_clone/core/utils/utilities.dart';
 import 'package:twitter_clone/features/home/presentation/bloc/home_bloc.dart';
 import 'package:twitter_clone/features/home/presentation/bloc/home_state.dart';
+import 'package:twitter_clone/features/home/presentation/screens/explore_screen.dart';
 import 'package:twitter_clone/features/home/presentation/widgets/tweet_card.dart';
 
 /// Home UI Constants for Bottom Navigation Bar
 class HomeUIConstants {
   static List<Widget> bottomTapBarScreens = [
     const TweetList(),
-    const Text('Search Screen'),
+    const ExploreScreen(),
     const Text('Notification Screen'),
   ];
 }

@@ -6,6 +6,7 @@ import 'package:twitter_clone/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:twitter_clone/features/auth/presentation/screens/login.dart';
 import 'package:twitter_clone/features/home/presentation/bloc/home_bloc.dart';
 import 'package:twitter_clone/features/home/presentation/screens/home.dart';
+import 'package:twitter_clone/features/user_profile/presentation/bloc/user_profile_bloc.dart';
 import 'package:twitter_clone/init_dependencies_part.dart';
 
 void main() async {
@@ -21,6 +22,9 @@ void main() async {
     ),
     BlocProvider(
       create: (_) => serviceLocator<HomeBloc>(),
+    ),
+    BlocProvider(
+      create: (_) => serviceLocator<UserProfileBloc>(),
     ),
   ], child: const MyApp()));
 }

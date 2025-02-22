@@ -30,6 +30,7 @@ Future<void> initDependencies() async {
 
     _initAuth();
     _initHome();
+    _initUserProfileBloc();
 
     log('Firebase Initialized');
   } catch (e) {
@@ -122,4 +123,15 @@ void _initHome() {
         getUserDataUsecase: serviceLocator(),
         createTweetUsecase: serviceLocator(),
       ));
+}
+
+void _initUserProfileBloc() {
+  serviceLocator.registerFactory<UserProfileRemoteDataSource>(() =>
+      UserProfileRemoteDataSourceImpl(firebaseFirestore: serviceLocator()));
+  serviceLocator.registerFactory<UserProfileRepoistory>(() =>
+      UserProfileRepositoryImpl(userProfileRemoteDataSource: serviceLocator()));
+  serviceLocator.registerFactory(
+      () => GetUserTweetUseCase(userProfileRepository: serviceLocator()));
+  serviceLocator.registerLazySingleton(
+      () => UserProfileBloc(getUserTweetUsecase: serviceLocator()));
 }

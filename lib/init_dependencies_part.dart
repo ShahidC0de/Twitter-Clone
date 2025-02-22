@@ -32,5 +32,10 @@ import 'package:twitter_clone/features/home/domain/usecases/tweet_parser.dart';
 import 'package:twitter_clone/features/home/domain/usecases/create_tweet_usecase.dart';
 import 'package:twitter_clone/features/home/domain/usecases/update_tweet_usecase.dart';
 import 'package:twitter_clone/features/home/presentation/bloc/home_bloc.dart';
+import 'package:twitter_clone/features/user_profile/data/data_source/user_profile_remote_data_source.dart';
+import 'package:twitter_clone/features/user_profile/data/repositories/user_profile_repository_impl.dart';
+import 'package:twitter_clone/features/user_profile/domain/repositories/user_profile_repoistory.dart';
+import 'package:twitter_clone/features/user_profile/domain/usecases/get_user_tweet.dart';
+import 'package:twitter_clone/features/user_profile/presentation/bloc/user_profile_bloc.dart';
 
 part "init_dependencies.dart";

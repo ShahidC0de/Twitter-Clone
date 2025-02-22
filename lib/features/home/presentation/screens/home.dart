@@ -38,7 +38,7 @@ class _HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: appBar,
+      appBar: _page == 0 ? appBar : null,
       bottomNavigationBar: CupertinoTabBar(
           backgroundColor: Pallete.backgroundColor,
           currentIndex: _page,
