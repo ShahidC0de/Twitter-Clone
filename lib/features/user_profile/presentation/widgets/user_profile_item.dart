@@ -27,6 +27,7 @@ class _UserProfileItemState extends State<UserProfileItem> {
 
   @override
   Widget build(BuildContext context) {
+    // ignore: no_leading_underscores_for_local_identifiers
     bool _checkTheUser(String currentUser) {
       final blocProvider = BlocProvider.of<AppUserCubit>(context);
       final state = blocProvider.state;
