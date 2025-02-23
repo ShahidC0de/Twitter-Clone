@@ -6,6 +6,7 @@ import 'package:twitter_clone/core/entities/user_entity.dart';
 import 'package:twitter_clone/core/theme/pallete.dart';
 import 'package:twitter_clone/features/home/presentation/widgets/tweet_card.dart';
 import 'package:twitter_clone/features/user_profile/presentation/bloc/user_profile_bloc.dart';
+import 'package:twitter_clone/features/user_profile/presentation/screens/edit_profile_screen.dart';
 import 'package:twitter_clone/features/user_profile/presentation/widgets/follow_count.dart';
 
 class UserProfileItem extends StatefulWidget {
@@ -68,7 +69,11 @@ class _UserProfileItemState extends State<UserProfileItem> {
                     alignment: Alignment.bottomRight,
                     margin: const EdgeInsets.all(20),
                     child: OutlinedButton(
-                        onPressed: () {},
+                        onPressed: () {
+                          if (_checkTheUser(widget.user.uid)) {
+                            Navigator.push(context, EditProfileScreen.route());
+                          } else {}
+                        },
                         style: ElevatedButton.styleFrom(
                             shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(20),

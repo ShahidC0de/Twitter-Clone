@@ -5,8 +5,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:like_button/like_button.dart';
+import 'package:path/path.dart';
 import 'package:twitter_clone/core/constants/assets_constants.dart';
 import 'package:twitter_clone/core/cubits/app_user/app_user_cubit.dart';
+import 'package:twitter_clone/core/entities/user_entity.dart';
 import 'package:twitter_clone/core/enums/tweet_type_enum.dart';
 import 'package:twitter_clone/core/theme/pallete.dart';
 import 'package:twitter_clone/features/home/domain/entities/tweet.dart';
@@ -17,6 +19,7 @@ import 'package:twitter_clone/features/home/presentation/screens/tweet_comment_s
 import 'package:twitter_clone/features/home/presentation/widgets/crousal_image.dart';
 import 'package:twitter_clone/features/home/presentation/widgets/hashtage_widget.dart';
 import 'package:twitter_clone/features/home/presentation/widgets/tweet_icon_button.dart';
+import 'package:twitter_clone/features/user_profile/presentation/screens/edit_profile_screen.dart';
 
 class TweetCard extends StatelessWidget {
   final Tweet tweet;
@@ -26,8 +29,8 @@ class TweetCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final blocProvider = BlocProvider.of<AppUserCubit>(context);
     final state = blocProvider.state;
-    final String currentUserId =
-        (state is AppUserLoggedIn) ? state.user.uid : '';
+    final UserEntity? currentUser =
+        (state is AppUserLoggedIn) ? state.user : null;
 
     return BlocBuilder<HomeBloc, HomeState>(
       builder: (context, state) {
@@ -64,9 +67,16 @@ class TweetCard extends StatelessWidget {
                 children: [
                   Container(
                     margin: const EdgeInsets.all(10),
-                    child: CircleAvatar(
-                      backgroundImage: NetworkImage(tweetUser.profilePic),
-                      radius: 30,
+                    child: GestureDetector(
+                      onTap: () {
+                        if (tweetUser.uid == currentUser!.uid) {
+                          Navigator.push(context, EditProfileScreen.route());
+                        }
+                      },
+                      child: CircleAvatar(
+                        backgroundImage: NetworkImage(tweetUser.profilePic),
+                        radius: 30,
+                      ),
                     ),
                   ),
                   Expanded(
@@ -160,15 +170,15 @@ class TweetCard extends StatelessWidget {
                                   onTap: () async {
                                     context.read<HomeBloc>().add(ReshareTweet(
                                         tweet: tweet,
-                                        currentUserId: currentUserId));
+                                        currentUserId: currentUser!.uid));
                                     state.tweets.insert(0, tweet);
                                   }),
                               LikeButton(
-                                isLiked: tweet.likes.contains(currentUserId),
+                                isLiked: tweet.likes.contains(currentUser),
                                 onTap: (isLiked) async {
                                   context.read<HomeBloc>().add(LikeTweet(
                                       tweet: tweet,
-                                      currentUserId: currentUserId));
+                                      currentUserId: currentUser!.uid));
                                   return !isLiked;
                                 },
                                 likeBuilder: (isLiked) {
