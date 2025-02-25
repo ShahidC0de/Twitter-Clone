@@ -129,9 +129,14 @@ void _initUserProfileBloc() {
   serviceLocator.registerFactory<UserProfileRemoteDataSource>(() =>
       UserProfileRemoteDataSourceImpl(firebaseFirestore: serviceLocator()));
   serviceLocator.registerFactory<UserProfileRepoistory>(() =>
-      UserProfileRepositoryImpl(userProfileRemoteDataSource: serviceLocator()));
+      UserProfileRepositoryImpl(
+          storageRemoteDatasource: serviceLocator(),
+          userProfileRemoteDataSource: serviceLocator()));
   serviceLocator.registerFactory(
       () => GetUserTweetUseCase(userProfileRepository: serviceLocator()));
-  serviceLocator.registerLazySingleton(
-      () => UserProfileBloc(getUserTweetUsecase: serviceLocator()));
+  serviceLocator.registerFactory(
+      () => UpdateUserDataUsecase(userProfileRepository: serviceLocator()));
+  serviceLocator.registerLazySingleton(() => UserProfileBloc(
+      updateUserDataUsecase: serviceLocator(),
+      getUserTweetUsecase: serviceLocator()));
 }

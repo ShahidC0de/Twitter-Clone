@@ -20,7 +20,7 @@ import 'package:twitter_clone/features/auth/domain/use_cases/sign_up_usecase.dar
 import 'package:twitter_clone/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:twitter_clone/features/home/data/local_data_source/home_local_data_source.dart';
 import 'package:twitter_clone/features/home/data/remote_data_source/home_remote_data_source.dart';
-import 'package:twitter_clone/features/home/data/remote_data_source/storage_remote_data_source.dart';
+import 'package:twitter_clone/core/common/storage_data_source/storage_remote_data_source.dart';
 import 'package:twitter_clone/features/home/data/repository_impl/home_repository_impl.dart';
 import 'package:twitter_clone/features/home/domain/repositories/home_repository.dart';
 import 'package:twitter_clone/features/home/domain/usecases/fetch_all_tweets_usecase.dart';
@@ -36,6 +36,7 @@ import 'package:twitter_clone/features/user_profile/data/data_source/user_profil
 import 'package:twitter_clone/features/user_profile/data/repositories/user_profile_repository_impl.dart';
 import 'package:twitter_clone/features/user_profile/domain/repositories/user_profile_repoistory.dart';
 import 'package:twitter_clone/features/user_profile/domain/usecases/get_user_tweet.dart';
+import 'package:twitter_clone/features/user_profile/domain/usecases/update_user_data_usecase.dart';
 import 'package:twitter_clone/features/user_profile/presentation/bloc/user_profile_bloc.dart';
 
 part "init_dependencies.dart";

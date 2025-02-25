@@ -21,3 +21,13 @@ Future<List<File>> pickImages() async {
   }
   return images; // and return the list;
 }
+
+Future<File?> pickImage() async {
+  final ImagePicker imagePicker = ImagePicker();
+  final imageFile = await imagePicker.pickImage(source: ImageSource.gallery);
+  if (imageFile != null) {
+    return File(imageFile.path);
+  } else {
+    return null;
+  }
+}

@@ -8,3 +8,14 @@ class GetUserTweetsEvent extends UserProfileEvent {
     required this.userId,
   });
 }
+
+class UpdateUserDataEvent extends UserProfileEvent {
+  final UserEntity user;
+  final File? bannerFile;
+  final File? profileFile;
+  UpdateUserDataEvent({
+    required this.user,
+    required this.bannerFile,
+    required this.profileFile,
+  });
+}

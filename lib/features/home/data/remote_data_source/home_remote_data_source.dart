@@ -7,7 +7,7 @@ import 'package:twitter_clone/core/constants/constants.dart';
 import 'package:twitter_clone/core/exceptions/auth_exceptions.dart';
 import 'package:twitter_clone/core/models/user_model.dart';
 import 'package:twitter_clone/features/home/data/models/tweetmodel.dart';
-import 'package:twitter_clone/features/home/data/remote_data_source/storage_remote_data_source.dart';
+import 'package:twitter_clone/core/common/storage_data_source/storage_remote_data_source.dart';
 
 abstract interface class HomeRemoteDataSource {
   String get getUserId;
